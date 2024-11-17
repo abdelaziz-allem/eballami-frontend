@@ -150,7 +150,7 @@ const Sidebar: React.FC = () => {
         className={cn(
           "z-50 h-full w-24 bg-slate-50 p-1 transition-all duration-200 ease-in-out dark:bg-gray-950",
           width ? "lg:w-64" : "w-24",
-          "overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-emerald-500 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-800"
+          "overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-800"
         )}
       >
         {/* Toggle Sidebar Icon */}
@@ -164,12 +164,12 @@ const Sidebar: React.FC = () => {
 
         {/* Logo and Brand */}
         <div className="mb-6 flex items-center justify-center gap-4 p-4">
-          <Image src="/next.svg" height={30} width={30} alt="patientlinklogo" />
+          <Image src="/next.svg" height={30} width={30} alt="next" />
           {width && (
             <Link href="/dashboard">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                  Patient<span className="text-emerald-500">Link</span>
+                  Hms<span className="text-blue-500">System</span>
                 </h1>
               </div>
             </Link>
@@ -187,12 +187,12 @@ const Sidebar: React.FC = () => {
                     <Link
                       href={item.href}
                       className={cn(
-                        "group flex items-center rounded-lg px-4 py-3 transition-all hover:bg-emerald-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100",
+                        "group flex items-center rounded-lg px-4 py-3 transition-all hover:bg-blue-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100",
                         pathName === item.href &&
-                          "border-r-4 border-emerald-500 bg-emerald-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                          "border-r-4 border-blue-500 bg-blue-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100 dark:border-blue-500"
                       )}
                     >
-                      <item.icon className="mr-3 text-emerald-700" size={25} />
+                      <item.icon className="mr-3 text-blue-700" size={25} />
                       {width && (
                         <span className="hidden text-sm font-medium lg:block">
                           {item.text}

@@ -47,12 +47,12 @@ const Navbar: React.FC = () => {
         {/* Search Section */}
         <div className="flex items-center space-x-2 w-full max-w-md">
           <Input
-            placeholder="Search patient"
+            placeholder="Search guest"
             type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             className="w-full rounded-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
-            aria-label="Search patient"
+            aria-label="Search guest"
           />
           <Button
             variant="ghost"
