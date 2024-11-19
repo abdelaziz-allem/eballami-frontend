@@ -7,41 +7,34 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  Activity,
-  AlertTriangle,
   AlignJustify,
-  BadgeIcon,
-  BellRing,
-  CheckSquare,
+  BedDouble,
+  BookOpen,
+  CalendarDays,
+  CreditCard,
+  Home,
+  KeyRound,
   Package,
-  PieChart,
-  Pill,
-  PillIcon,
-  SquareKanban,
-  SyringeIcon,
-  Ticket,
-  TrendingDown,
-  TrendingUp,
-  UserCog,
-  UserRoundPlus,
+  Settings,
+  UserCheck,
+  UserPlus,
   Users,
-  WalletCards,
 } from "lucide-react";
 import nookies from "nookies";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 const Sidebar: React.FC = () => {
   const [width, setWidth] = useState(false);
-  const [loggedInStaffRole, setLoggedInStaffRole] = useState("all");
+  const [loggedInStaffRole, setLoggedInStaffRole] = useState("admin");
 
   const toggleSidebar = () => {
     const newWidth = !width;
     setWidth(newWidth);
-
     nookies.set(null, "sidebarWidth", newWidth.toString(), {
-      maxAge: 30 * 24 * 60 * 60, // 30 days
+      maxAge: 30 * 24 * 60 * 60,
       path: "/",
     });
   };
@@ -50,97 +43,70 @@ const Sidebar: React.FC = () => {
 
   const sidebarItems = [
     {
-      href: "/dashboard/analytics",
-      icon: PieChart,
-      text: "Analytics",
-      role: ["admin", "tech"],
+      href: "/dashboard/overview",
+      icon: Home,
+      text: "Overview",
+      role: ["admin", "manager"],
+    },
+    {
+      href: "/dashboard/rooms",
+      icon: BedDouble,
+      text: "Rooms",
+      role: ["admin", "manager", "staff"],
+    },
+    {
+      href: "/dashboard/bookings",
+      icon: CalendarDays,
+      text: "Bookings",
+      role: ["admin", "manager", "staff"],
+    },
+    {
+      href: "/dashboard/guests",
+      icon: Users,
+      text: "Guests",
+      role: ["admin", "manager", "staff"],
+    },
+    {
+      href: "/dashboard/checkins",
+      icon: KeyRound,
+      text: "Check-ins",
+      role: ["admin", "staff"],
     },
     {
       href: "/dashboard/payments",
-      icon: TrendingUp,
+      icon: CreditCard,
       text: "Payments",
-      role: ["admin", "cashier", "tech"],
+      role: ["admin", "manager", "staff"],
     },
     {
-      href: "/dashboard/expenses",
-      icon: TrendingDown,
-      text: "Expenses",
-      role: ["admin", "cashier", "tech"],
-    },
-    {
-      href: "/dashboard/order",
+      href: "/dashboard/inventory",
       icon: Package,
-      text: "Orders",
-      role: ["admin", "cashier", "tech"],
+      text: "Inventory",
+      role: ["admin", "manager"],
     },
     {
-      href: "/dashboard/due",
-      icon: BellRing,
-      text: "Due",
-      role: ["admin", "cashier", "tech"],
-    },
-
-    {
-      href: "/dashboard/pay",
-      icon: WalletCards,
-      text: "Pay",
-      role: ["admin", "cashier", "tech"],
+      href: "/dashboard/staff",
+      icon: UserCheck,
+      text: "Staff",
+      role: ["admin", "manager"],
     },
     {
-      href: "/dashboard/pharmacy",
-      icon: PillIcon,
-      text: "Pharmacy",
-      role: ["admin", "cashier", "tech"],
+      href: "/dashboard/addguest",
+      icon: UserPlus,
+      text: "Add Guest",
+      role: ["admin", "staff"],
     },
     {
-      href: "/dashboard/pendingprescriptions",
-      icon: SyringeIcon,
-      text: "Prescriptions",
-      role: ["admin", "cashier", "tech"],
+      href: "/dashboard/reports",
+      icon: BookOpen,
+      text: "Reports",
+      role: ["admin", "manager"],
     },
     {
-      href: "/dashboard/treatmentplan",
-      icon: SquareKanban,
-      text: "Treatment Plans",
-      role: ["admin", "cashier", "tech"],
-    },
-    // {
-    //   href: "/dashboard/service",
-    //   icon: ServerCogIcon,
-    //   text: "Service",
-    //   role: ["admin", "cashier", "tech"],
-    // },
-
-    {
-      href: "/dashboard/walkin",
-      icon: UserCog,
-      text: "Walkin",
-      role: ["admin", "cashier", "tech"],
-    },
-    {
-      href: "/dashboard/patients/addpatient",
-      icon: UserRoundPlus,
-      text: "Add patient",
-      role: ["admin", "reception", "cashier", "tech"],
-    },
-    {
-      href: "/dashboard/patients",
-      icon: Users,
-      text: "Patients",
-      role: ["admin", "tech"],
-    },
-    {
-      href: "/dashboard/appointments",
-      icon: CheckSquare,
-      text: "Appointments",
-      role: ["admin", "reception", "cashier", "tech"],
-    },
-
-    {
-      href: "/dashboard/doctorappointments",
-      icon: CheckSquare,
-      text: "Appointments",
-      role: ["doctor"],
+      href: "/dashboard/settings",
+      icon: Settings,
+      text: "Settings",
+      role: ["admin"],
     },
   ];
 
@@ -148,28 +114,28 @@ const Sidebar: React.FC = () => {
     <div className="relative h-full">
       <div
         className={cn(
-          "z-50 h-full w-24 bg-slate-50 p-1 transition-all duration-200 ease-in-out dark:bg-gray-950",
-          width ? "lg:w-64" : "w-24",
+          "z-50 h-screen bg-slate-50 p-1 transition-all duration-200 ease-in-out dark:bg-gray-950",
+          width ? "w-64" : "w-20",
           "overflow-y-auto scrollbar-thin scrollbar-track-gray-200 scrollbar-thumb-blue-500 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-800"
         )}
       >
         {/* Toggle Sidebar Icon */}
-        <div className="absolute left-[calc(100%_+_1rem)] top-4">
+        <div className="absolute left-[calc(100%+1rem)] top-4">
           <AlignJustify
             size={25}
-            className="cursor-pointer transition-transform hover:scale-105 md:block"
+            className="cursor-pointer hover:scale-105"
             onClick={toggleSidebar}
           />
         </div>
 
         {/* Logo and Brand */}
         <div className="mb-6 flex items-center justify-center gap-4 p-4">
-          <Image src="/next.svg" height={30} width={30} alt="next" />
+          <Image src="/hotel-logo.svg" height={30} width={30} alt="HMS Logo" />
           {width && (
             <Link href="/dashboard">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                  Hms<span className="text-blue-500">System</span>
+                  HMS<span className="text-blue-500">Pro</span>
                 </h1>
               </div>
             </Link>
@@ -178,9 +144,8 @@ const Sidebar: React.FC = () => {
 
         {/* Sidebar Items */}
         {sidebarItems.map((item, index) => (
-          <div key={index} className="mb-4">
-            {(item.role?.includes("admin") ||
-              item.role?.includes(loggedInStaffRole)) && (
+          <div key={index} className="mb-2">
+            {item.role.includes(loggedInStaffRole) && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -189,7 +154,7 @@ const Sidebar: React.FC = () => {
                       className={cn(
                         "group flex items-center rounded-lg px-4 py-3 transition-all hover:bg-blue-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100",
                         pathName === item.href &&
-                          "border-r-4 border-blue-500 bg-blue-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100 dark:border-blue-500"
+                          "border-r-4 border-blue-500 bg-blue-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
                       )}
                     >
                       <item.icon className="mr-3 text-blue-700" size={25} />
