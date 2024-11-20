@@ -8,9 +8,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 
 export const metadata: Metadata = {
-  title: "PatientLink",
-  description: "by alim solutions",
-  icons: "/patientlinknotext.png",
+  title: "HMS",
+  description: "by nexlogik",
+  icons: "/next.svg",
 };
 
 export const revalidate = 0;

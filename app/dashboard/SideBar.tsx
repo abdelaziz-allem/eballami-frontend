@@ -16,6 +16,7 @@ import {
   KeyRound,
   Package,
   Settings,
+  TypeIcon,
   UserCheck,
   UserPlus,
   Users,
@@ -52,6 +53,12 @@ const Sidebar: React.FC = () => {
       href: "/dashboard/rooms",
       icon: BedDouble,
       text: "Rooms",
+      role: ["admin", "manager", "staff"],
+    },
+    {
+      href: "/dashboard/room-types",
+      icon: TypeIcon,
+      text: "Room Types",
       role: ["admin", "manager", "staff"],
     },
     {
