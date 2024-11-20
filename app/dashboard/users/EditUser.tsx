@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// import { createRoom } from "@/lib/db/roomCrud";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,41 +31,28 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Edit2Icon } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { RoomType } from "@/lib/types/type";
-import { updateRoom } from "@/lib/db/roomCrud";
+import { updateUser } from "@/lib/db/userCrud";
+import { ROLE, User } from "@/lib/types/type";
+const roleOptions = Object.values(ROLE);
 
 const schema = z.object({
-  roomNumber: z.string().min(1, "Room number is required"),
-  typeId: z.string().min(1, "Room type is required"),
+  name: z.string().min(1, "User number is required"),
+  mobileNumber: z.string().min(1, "Mobile number is required"),
+  role: z.enum(roleOptions as [ROLE, ...ROLE[]]),
 });
 
 type FormData = z.infer<typeof schema>;
 
-interface EditRoomProps {
-  roomId: number;
-  roomNumber: string;
-  roomTypeId: number;
-  roomTypes: RoomType[];
-}
-
-const EditRoom = ({
-  roomId,
-  roomNumber,
-  roomTypeId,
-  roomTypes,
-}: EditRoomProps) => {
+const EditUser = ({ user }: { user: User }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      roomNumber: roomNumber,
-      typeId: String(roomTypeId),
-    },
+    defaultValues: user,
   });
 
   const {
@@ -79,11 +65,10 @@ const EditRoom = ({
     try {
       setLoading(true);
 
-      console.log(formData);
-
-      await updateRoom(roomId, {
-        number: formData.roomNumber,
-        typeId: Number(formData.typeId),
+      await updateUser(user.id, {
+        name: formData.name,
+        mobileNumber: formData.mobileNumber,
+        role: formData.role,
       });
 
       setLoading(false);
@@ -102,28 +87,29 @@ const EditRoom = ({
           className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
           variant="ghost"
         >
-          <Edit2Icon className="transform transition-transform hover:scale-110" />
+          <Edit2 className="transform transition-transform hover:scale-110" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Room</DialogTitle>
+          <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <FormField
               control={control}
-              name="roomNumber"
+              name="name"
+              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Room Number</FormLabel>
+                  <FormLabel>User Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter room number" {...field} />
+                    <Input placeholder="Enter user name" {...field} />
                   </FormControl>
-                  {errors.roomNumber && (
+                  {errors.name && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.roomNumber.message}
+                      {errors.name.message}
                     </p>
                   )}
                 </FormItem>
@@ -132,38 +118,53 @@ const EditRoom = ({
 
             <FormField
               control={control}
-              name="typeId"
+              name="mobileNumber"
+              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Room Type</FormLabel>
+                  <FormLabel>Mobile Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter user number" {...field} />
+                  </FormControl>
+                  {errors.mobileNumber && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.mobileNumber.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>User Type</FormLabel>
                   <FormControl>
                     <Select
                       required
                       {...field}
-                      defaultValue="1"
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select room type" />
+                        <SelectValue placeholder="Select user type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Room Type</SelectLabel>
-                          {roomTypes.map((roomType) => (
-                            <SelectItem
-                              key={roomType.id}
-                              value={roomType.id.toString()}
-                            >
-                              {roomType.name}
+                          <SelectLabel>User Type</SelectLabel>
+                          {roleOptions.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {errors.typeId && (
+                  {errors.role && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.typeId.message}
+                      {errors.role.message}
                     </p>
                   )}
                 </FormItem>
@@ -186,4 +187,4 @@ const EditRoom = ({
   );
 };
 
-export default EditRoom;
+export default EditUser;

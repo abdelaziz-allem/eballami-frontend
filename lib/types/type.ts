@@ -48,3 +48,46 @@ export interface UpdateRoom {
 }
 
 //ROOM END//
+
+//USER TYPES START//
+
+export enum ROLE {
+  ADMIN = "Admin",
+  RECEPTION = "Reception",
+  CASHIER = "Cashier",
+  WAITER = "Waiter",
+  HOUSEKEEPING = "HouseKeeping",
+  HOUSEKEEPING_ADMIN = "HouseKeepingAdmin",
+}
+
+export interface User {
+  id: number;
+  name: string;
+  mobileNumber: string;
+  password: string;
+  role: ROLE;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateUser {
+  name: string;
+  mobileNumber: string;
+  password: string;
+  role: ROLE;
+}
+
+export interface UpdateUser {
+  name?: string;
+  mobileNumber?: string;
+  role?: ROLE;
+  password?: string;
+}
+
+export interface userInSessionType {
+  name: string;
+  id: number;
+  mobileNumber: string;
+  role: string;
+}
+//USER TYPES END//

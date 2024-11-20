@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// import { createRoom } from "@/lib/db/roomCrud";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,6 +34,7 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { createRoom } from "@/lib/db/roomCrud";
+import { RoomType } from "@/lib/types/type";
 
 const schema = z.object({
   roomNumber: z.string().min(1, "Room number is required"),
@@ -43,13 +43,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const typeOptions = [
-  { label: "Single", value: 1 },
-  { label: "Double", value: 2 },
-  { label: "Suite", value: 3 },
-];
-
-const AddRoom = () => {
+const AddRoom = ({ roomTypes }: { roomTypes: RoomType[] }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
@@ -86,7 +80,7 @@ const AddRoom = () => {
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-emerald-500 transition-colors duration-300 ease-in-out hover:bg-emerald-100 hover:text-emerald-500"
+          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
           variant="ghost"
         >
           <Plus className="transform transition-transform hover:scale-110" />
@@ -129,7 +123,7 @@ const AddRoom = () => {
                     <Select
                       required
                       {...field}
-                      onValueChange={(value) => field.onChange(value)}
+                      onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select room type" />
@@ -137,12 +131,12 @@ const AddRoom = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Room Type</SelectLabel>
-                          {typeOptions.map((option) => (
+                          {roomTypes.map((roomType) => (
                             <SelectItem
-                              key={option.value}
-                              value={option.value.toString()}
+                              key={roomType.id}
+                              value={roomType.id.toString()}
                             >
-                              {option.label}
+                              {roomType.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -162,7 +156,7 @@ const AddRoom = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600"
+                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

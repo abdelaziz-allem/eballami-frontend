@@ -16,11 +16,8 @@ export const getAccessToken = async (
       userData
     );
     return response.data;
-  } catch (error: any) {
-    console.error(
-      "Error authenticating user:",
-      error.response?.data || error.message
-    );
+  } catch (error) {
+    console.error("Error authenticating user:");
     throw new Error("Failed to authenticate user");
   }
 };

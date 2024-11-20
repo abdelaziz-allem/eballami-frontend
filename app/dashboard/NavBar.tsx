@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
             type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            className="w-full rounded-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-emerald-500 dark:focus:ring-emerald-500"
+            className="w-full rounded-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500"
             aria-label="Search guest"
           />
           <Button

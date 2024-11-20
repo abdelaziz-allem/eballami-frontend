@@ -24,7 +24,6 @@ interface RoomsProps {
 const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
   const [search, setSearch] = useState("");
 
-  // Filter rooms based on the search query
   const currentRooms = rooms.filter((room) =>
     room.number.toLowerCase().includes(search.toLowerCase())
   );
@@ -36,7 +35,7 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
   return (
     <div className="mx-6 rounded-lg border p-4 shadow-sm">
       <div className="flex gap-3 mb-4">
-        <AddRoom />
+        <AddRoom roomTypes={roomTypes} />
         <Input
           className="w-auto"
           placeholder="Search by room number..."

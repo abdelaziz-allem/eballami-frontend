@@ -6,30 +6,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import {
-  AlignJustify,
-  BedDouble,
-  BookOpen,
-  CalendarDays,
-  CreditCard,
-  Home,
-  KeyRound,
-  Package,
-  Settings,
-  TypeIcon,
-  UserCheck,
-  UserPlus,
-  Users,
-} from "lucide-react";
+import { AlignJustify } from "lucide-react";
 import nookies from "nookies";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import sidebarItems from "@/components/SideBarItems";
+import { userInSessionType } from "@/lib/types/type";
 
-const Sidebar: React.FC = () => {
+const Sidebar = ({ user }: { user: userInSessionType | null }) => {
+  if (!user) {
+    return <Skeleton />;
+  }
   const [width, setWidth] = useState(false);
-  const [loggedInStaffRole, setLoggedInStaffRole] = useState("admin");
 
   const toggleSidebar = () => {
     const newWidth = !width;
@@ -41,81 +32,6 @@ const Sidebar: React.FC = () => {
   };
 
   const pathName = usePathname();
-
-  const sidebarItems = [
-    {
-      href: "/dashboard/overview",
-      icon: Home,
-      text: "Overview",
-      role: ["admin", "manager"],
-    },
-    {
-      href: "/dashboard/rooms",
-      icon: BedDouble,
-      text: "Rooms",
-      role: ["admin", "manager", "staff"],
-    },
-    {
-      href: "/dashboard/room-types",
-      icon: TypeIcon,
-      text: "Room Types",
-      role: ["admin", "manager", "staff"],
-    },
-    {
-      href: "/dashboard/bookings",
-      icon: CalendarDays,
-      text: "Bookings",
-      role: ["admin", "manager", "staff"],
-    },
-    {
-      href: "/dashboard/guests",
-      icon: Users,
-      text: "Guests",
-      role: ["admin", "manager", "staff"],
-    },
-    {
-      href: "/dashboard/checkins",
-      icon: KeyRound,
-      text: "Check-ins",
-      role: ["admin", "staff"],
-    },
-    {
-      href: "/dashboard/payments",
-      icon: CreditCard,
-      text: "Payments",
-      role: ["admin", "manager", "staff"],
-    },
-    {
-      href: "/dashboard/inventory",
-      icon: Package,
-      text: "Inventory",
-      role: ["admin", "manager"],
-    },
-    {
-      href: "/dashboard/staff",
-      icon: UserCheck,
-      text: "Staff",
-      role: ["admin", "manager"],
-    },
-    {
-      href: "/dashboard/addguest",
-      icon: UserPlus,
-      text: "Add Guest",
-      role: ["admin", "staff"],
-    },
-    {
-      href: "/dashboard/reports",
-      icon: BookOpen,
-      text: "Reports",
-      role: ["admin", "manager"],
-    },
-    {
-      href: "/dashboard/settings",
-      icon: Settings,
-      text: "Settings",
-      role: ["admin"],
-    },
-  ];
 
   return (
     <div className="relative h-full">
@@ -149,10 +65,9 @@ const Sidebar: React.FC = () => {
           )}
         </div>
 
-        {/* Sidebar Items */}
         {sidebarItems.map((item, index) => (
           <div key={index} className="mb-2">
-            {item.role.includes(loggedInStaffRole) && (
+            {item.role.includes(user?.role) && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
