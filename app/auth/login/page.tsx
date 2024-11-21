@@ -18,6 +18,7 @@ import {
 import { EyeIcon, EyeOffIcon, PhoneIcon } from "lucide-react";
 import { getAccessToken } from "@/lib/db/auth";
 import nookies from "nookies";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   mobileNumber: z.string().min(1, "Phone number is required"),
@@ -27,6 +28,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
@@ -42,6 +44,7 @@ function LoginPage() {
     try {
       const user = await getAccessToken(data);
       nookies.set(undefined, "access_token", user.access_token, { path: "/" });
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error logging in:", error);
       setError("Failed to log in. Please try again later.");

@@ -28,6 +28,7 @@ import { updateRoomType } from "@/lib/db/roomTypesCrud";
 
 const schema = z.object({
   type: z.string().min(1, "Room number is required"),
+  price: z.string().min(1, "Price is required"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -35,9 +36,11 @@ type FormData = z.infer<typeof schema>;
 const EditRoomType = ({
   roomTypeId,
   roomTypeName,
+  pricePerNight,
 }: {
   roomTypeId: number;
   roomTypeName: string;
+  pricePerNight: number;
 }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -47,6 +50,7 @@ const EditRoomType = ({
     resolver: zodResolver(schema),
     defaultValues: {
       type: roomTypeName,
+      price: pricePerNight.toString(),
     },
   });
 
@@ -62,6 +66,7 @@ const EditRoomType = ({
 
       await updateRoomType(roomTypeId, {
         name: formData.type,
+        pricePerNight: Number(formData.price),
       });
 
       setLoading(false);
@@ -103,6 +108,25 @@ const EditRoomType = ({
                   {errors.type && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.type.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="price"
+              defaultValue={""}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="Enter price" {...field} />
+                  </FormControl>
+                  {errors.price && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.price.message}
                     </p>
                   )}
                 </FormItem>

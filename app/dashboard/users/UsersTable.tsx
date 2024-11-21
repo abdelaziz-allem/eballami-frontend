@@ -42,11 +42,11 @@ const UsersTable = ({ users }: UsersProps) => {
       case ROLE.WAITER:
         return "bg-red-500 hover:bg-red-600";
       case ROLE.HOUSEKEEPING:
-        return "bg-purple-500 bg-purple-600";
+        return "bg-purple-500 hover:bg-purple-600";
       case ROLE.HOUSEKEEPING_ADMIN:
-        return "bg-pink-500 bg-pink-600";
+        return "bg-pink-500 hover:bg-pink-600";
       default:
-        return "bg-gray-500 bg-gray-600";
+        return "bg-gray-500 hover:bg-gray-600";
     }
   };
   return (

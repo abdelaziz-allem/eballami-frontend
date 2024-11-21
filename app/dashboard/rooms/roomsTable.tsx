@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import AddRoom from "./AddRoom";
 import EditRoom from "./EditRoom";
 import { Badge } from "@/components/ui/badge";
-import { Room, RoomType } from "@/lib/types/type";
+import { Room, RoomType, Status } from "@/lib/types/type";
 
 interface RoomsProps {
   rooms: Room[];
@@ -30,6 +30,17 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+  };
+
+  const getStatusColor = (status: Status) => {
+    switch (status) {
+      case Status.OCCUPIED:
+        return "bg-green-500 hover:bg-green-600";
+      case Status.AVAILABLE:
+        return "bg-blue-500 hover:bg-blue-600";
+      default:
+        return "bg-gray-500 hover:bg-gray-600";
+    }
   };
 
   return (
@@ -53,6 +64,7 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
           <TableRow>
             <TableHead>Room Number</TableHead>
             <TableHead>Type</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
@@ -63,8 +75,13 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
             <TableRow key={room.id}>
               <TableCell>{room.number}</TableCell>
               <TableCell>
-                <Badge className={`bg-blue-400 hover:bg-blue-500`}>
+                <Badge className={`bg-pink-400 hover:bg-pink-500`}>
                   {room.type.name}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge className={getStatusColor(room.status)}>
+                  {room.status}
                 </Badge>
               </TableCell>
               <TableCell>

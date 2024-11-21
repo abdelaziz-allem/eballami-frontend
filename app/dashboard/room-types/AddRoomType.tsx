@@ -27,6 +27,7 @@ import { createRoomType } from "@/lib/db/roomTypesCrud";
 
 const schema = z.object({
   type: z.string().min(1, "Room number is required"),
+  price: z.string().min(1, "Price is required"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -52,6 +53,7 @@ const AddRoomType = () => {
 
       await createRoomType({
         name: formData.type,
+        pricePerNight: Number(formData.price),
       });
 
       setLoading(false);
@@ -93,6 +95,25 @@ const AddRoomType = () => {
                   {errors.type && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.type.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="price"
+              defaultValue={""}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="Enter price" {...field} />
+                  </FormControl>
+                  {errors.price && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.price.message}
                     </p>
                   )}
                 </FormItem>

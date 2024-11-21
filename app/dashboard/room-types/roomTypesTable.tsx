@@ -50,6 +50,7 @@ const RoomTypesTable = ({ roomTypes }: RoomsProps) => {
         <TableHeader>
           <TableRow>
             <TableHead>Type</TableHead>
+            <TableHead>Price Per Night</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
@@ -59,6 +60,7 @@ const RoomTypesTable = ({ roomTypes }: RoomsProps) => {
           {currentRoomTypes.map((roomType) => (
             <TableRow key={roomType.id}>
               <TableCell>{roomType.name}</TableCell>
+              <TableCell>$ {roomType.pricePerNight}</TableCell>
 
               <TableCell>
                 {new Date(roomType.createdAt).toLocaleDateString()}
@@ -67,6 +69,7 @@ const RoomTypesTable = ({ roomTypes }: RoomsProps) => {
                 <EditRoomType
                   roomTypeId={roomType.id}
                   roomTypeName={roomType.name}
+                  pricePerNight={roomType.pricePerNight}
                 />
               </TableCell>
             </TableRow>
