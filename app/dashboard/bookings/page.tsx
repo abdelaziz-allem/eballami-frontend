@@ -13,7 +13,6 @@ const BookingPage = async () => {
     const fetchedData = await getRooms();
     const fetchedBookings = await getBookings();
     bookings = fetchedBookings;
-
     rooms = fetchedData;
   } catch (err) {
     console.error("Error fetching roomTypes:", err);

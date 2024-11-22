@@ -8,9 +8,9 @@ export const axiosInstance = axios.create({
   },
 });
 
-export async function getAuthHeaders() {
+export function getAuthHeaders() {
   const cookieStore = cookies();
-  const token = (await cookieStore).get("access_token")?.value;
+  const token = cookieStore.get("access_token")?.value;
 
   if (!token) {
     throw new Error("Access token is missing");

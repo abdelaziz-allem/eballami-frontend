@@ -17,6 +17,8 @@ import {
 import { Booking, Room, Status } from "@/lib/types/type";
 import AddBooking from "./AddBooking";
 import clsx from "clsx";
+import { CheckOut } from "./CheckOut";
+import { formatDate } from "@/lib/utils";
 
 export default function Bookings({
   rooms,
@@ -72,20 +74,42 @@ export default function Bookings({
           </DialogHeader>
           <CardContent>
             {bookingDetails ? (
-              <div>
-                <p>
-                  <strong>Guest Name:</strong> {bookingDetails.guest.firstName}-
-                  {bookingDetails.guest.lastName}
-                </p>
-                <p>
-                  <strong>Guest Email:</strong> {bookingDetails.guest.email}
-                </p>
-                <p>
-                  <strong>Check-in:</strong> {bookingDetails.checkInDate}
-                </p>
-                <p>
-                  <strong>Check-out:</strong> {bookingDetails.checkOutDate}
-                </p>
+              <div className="flex flex-col gap-6">
+                <div>
+                  <p>
+                    <strong>Guest Name:</strong>{" "}
+                    {bookingDetails.guest.firstName}-
+                    {bookingDetails.guest.lastName}
+                  </p>
+                  <p>
+                    <strong>Guest Email:</strong> {bookingDetails.guest.email}
+                  </p>
+                  <p>
+                    <strong>Check-in:</strong>{" "}
+                    {formatDate(bookingDetails.checkInDate)}
+                  </p>
+
+                  {new Date(bookingDetails.checkOutDate) < new Date() ? (
+                    <div>
+                      <p className="line-through">
+                        <strong>Check-out:</strong>{" "}
+                        {formatDate(bookingDetails.checkOutDate.toString())}
+                      </p>
+                      <p>
+                        <strong>Current Date:</strong>{" "}
+                        {formatDate(new Date().toString())}
+                      </p>
+                    </div>
+                  ) : (
+                    <p>
+                      <strong>Check-out:</strong>{" "}
+                      {formatDate(bookingDetails.checkOutDate)}
+                    </p>
+                  )}
+                </div>
+                <div className="flex justify-center">
+                  <CheckOut onClose={() => setSelectedRoom(null)} />
+                </div>
               </div>
             ) : (
               <AddBooking

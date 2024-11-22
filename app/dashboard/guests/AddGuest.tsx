@@ -53,7 +53,7 @@ const AddRoomType = () => {
 
       await createRoomType({
         name: formData.type,
-        pricePerNight: formData.price,
+        pricePerNight: Number(formData.price),
       });
 
       setLoading(false);

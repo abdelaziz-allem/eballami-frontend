@@ -62,7 +62,7 @@ const sidebarItems = [
     role: ["Admin", "manager"],
   },
   {
-    href: "/dashboard/user",
+    href: "/dashboard/users",
     icon: UserCheck,
     text: "Staff",
     role: ["Admin", "manager"],

@@ -40,7 +40,7 @@ const EditRoomType = ({
 }: {
   roomTypeId: number;
   roomTypeName: string;
-  pricePerNight: number;
+  pricePerNight: string;
 }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -66,7 +66,7 @@ const EditRoomType = ({
 
       await updateRoomType(roomTypeId, {
         name: formData.type,
-        pricePerNight: Number(formData.price),
+        pricePerNight: formData.price,
       });
 
       setLoading(false);

@@ -9,19 +9,19 @@ export interface AuthType {
 export interface RoomType {
   id: number;
   name: string;
-  pricePerNight: number;
+  pricePerNight: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateRoomType {
   name: string;
-  pricePerNight: number;
+  pricePerNight: string;
 }
 
 export interface UpdateRoomType {
   name?: string;
-  pricePerNight?: number;
+  pricePerNight?: string;
 }
 
 //ROOM TYPES END//

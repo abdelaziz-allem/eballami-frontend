@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,9 +22,9 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { createRoomType } from "@/lib/db/roomTypesCrud";
+import { updateRoomType } from "@/lib/db/roomTypesCrud";
 
 const schema = z.object({
   type: z.string().min(1, "Room number is required"),
@@ -32,13 +33,25 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const AddRoomType = () => {
+const EditRoomType = ({
+  roomTypeId,
+  roomTypeName,
+  pricePerNight,
+}: {
+  roomTypeId: number;
+  roomTypeName: string;
+  pricePerNight: number;
+}) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      type: roomTypeName,
+      price: pricePerNight.toString(),
+    },
   });
 
   const {
@@ -51,9 +64,9 @@ const AddRoomType = () => {
     try {
       setLoading(true);
 
-      await createRoomType({
+      await updateRoomType(roomTypeId, {
         name: formData.type,
-        pricePerNight: formData.price,
+        pricePerNight: Number(formData.price),
       });
 
       setLoading(false);
@@ -72,7 +85,7 @@ const AddRoomType = () => {
           className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
           variant="ghost"
         >
-          <Plus className="transform transition-transform hover:scale-110" />
+          <Edit2 className="transform transition-transform hover:scale-110" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -136,4 +149,4 @@ const AddRoomType = () => {
   );
 };
 
-export default AddRoomType;
+export default EditRoomType;
