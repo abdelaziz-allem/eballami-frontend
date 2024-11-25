@@ -3,9 +3,10 @@
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
 import { CreateGuest, Guest, UpdateGuest } from "../types/type";
 
+const headers = getAuthHeaders();
+
 export async function getGuests(): Promise<Guest[]> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.get("/guest", { headers });
     return response.data;
   } catch (error) {
@@ -16,7 +17,6 @@ export async function getGuests(): Promise<Guest[]> {
 
 export const createGuest = async (guestData: CreateGuest): Promise<Guest> => {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.post("/guest", guestData, { headers });
     return response.data;
   } catch (error) {
@@ -30,7 +30,6 @@ export async function updateGuest(
   updatedData: UpdateGuest
 ): Promise<Guest> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.put(`/guest/${guestId}`, updatedData, {
       headers,
     });
@@ -43,7 +42,6 @@ export async function updateGuest(
 
 export async function deleteGuest(id: number): Promise<void> {
   try {
-    const headers = await getAuthHeaders();
     await axiosInstance.delete(`/guest/${id}`, { headers });
   } catch (error) {
     console.error("Error deleting guest:", error);

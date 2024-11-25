@@ -25,12 +25,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import nookies from "nookies";
+import { useRouter } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
 
-  // Replace this with actual staff name logic
   const staffName = "John Doe";
 
   const toggleTheme = () => {
@@ -38,7 +40,8 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogout = () => {
-    console.log("Logout triggered"); // Replace with actual logout logic
+    nookies.destroy(null, "access_token", { path: "/" });
+    router.push("/auth/login");
   };
 
   return (
@@ -129,7 +132,7 @@ const Navbar: React.FC = () => {
                   </DialogHeader>
                   <DialogFooter>
                     <Button variant="destructive" onClick={handleLogout}>
-                      Confirm Logout
+                      Logout
                     </Button>
                   </DialogFooter>
                 </DialogContent>

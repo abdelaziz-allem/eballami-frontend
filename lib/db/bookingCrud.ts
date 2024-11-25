@@ -1,11 +1,26 @@
 "use server";
 
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
-import { CreateBooking, Booking, UpdateBooking } from "../types/type";
+import {
+  CreateBooking,
+  Booking,
+  UpdateBooking,
+  BookingStatus,
+} from "../types/type";
 
-export async function getBookings(): Promise<Booking[]> {
+const headers = getAuthHeaders();
+
+export async function getBookings(
+  BookingStatus?: BookingStatus
+): Promise<Booking[]> {
   try {
-    const headers = await getAuthHeaders();
+    if (BookingStatus) {
+      const response = await axiosInstance.get(
+        `/Booking?status=${BookingStatus}`,
+        { headers }
+      );
+      return response.data;
+    }
     const response = await axiosInstance.get("/Booking", { headers });
     return response.data;
   } catch (error) {
@@ -18,7 +33,6 @@ export const createBooking = async (
   BookingData: CreateBooking
 ): Promise<Booking> => {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.post("/Booking", BookingData, {
       headers,
     });
@@ -34,7 +48,6 @@ export async function updateBooking(
   updatedData: UpdateBooking
 ): Promise<Booking> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.put(
       `/Booking/${BookingId}`,
       updatedData,
@@ -51,7 +64,6 @@ export async function updateBooking(
 
 export async function deleteBooking(id: number): Promise<void> {
   try {
-    const headers = await getAuthHeaders();
     await axiosInstance.delete(`/Booking/${id}`, { headers });
   } catch (error) {
     console.error("Error deleting Booking:", error);

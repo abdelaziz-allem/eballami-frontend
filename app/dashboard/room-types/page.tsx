@@ -8,9 +8,7 @@ const RoomTypesPage = async () => {
   let error: string | null = null;
 
   try {
-    const fetchedData = await getRoomTypes();
-
-    roomTypes = fetchedData;
+    roomTypes = await getRoomTypes();
   } catch (err) {
     console.error("Error fetching roomTypes:", err);
     error = "Failed to load roomTypes. Please try again later.";

@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// import { createRoom } from "@/lib/db/roomCrud";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,47 +31,34 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Edit2Icon } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { RoomType, RoomStatus } from "@/lib/types/type";
-import { updateRoom } from "@/lib/db/roomCrud";
-
-const statusOptions = Object.values(RoomStatus);
+import { Room, User, userInSessionType } from "@/lib/types/type";
+import { createHousekeepingTask } from "@/lib/db/houseKeepingTaskCrud";
 
 const schema = z.object({
-  roomNumber: z.string().min(1, "Room number is required"),
-  typeId: z.string().min(1, "Room type is required"),
-  status: z.enum(statusOptions as [RoomStatus, ...RoomStatus[]]),
+  description: z.string().min(1, "HousekeepingTask number is required"),
+  roomId: z.string().min(1, "Room number is required"),
+  userid: z.string().min(1, "assigned user  is required"),
 });
 
 type FormData = z.infer<typeof schema>;
 
-interface EditRoomProps {
-  roomId: number;
-  roomNumber: string;
-  roomTypeId: number;
-  roomStatus: RoomStatus;
-  roomTypes: RoomType[];
-}
-
-const EditRoom = ({
-  roomId,
-  roomNumber,
-  roomTypeId,
-  roomTypes,
-  roomStatus,
-}: EditRoomProps) => {
+const AddHouseKeepingTask = ({
+  rooms,
+  users,
+  assignedBy,
+}: {
+  rooms: Room[];
+  users: User[];
+  assignedBy: userInSessionType;
+}) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      roomNumber: roomNumber,
-      typeId: String(roomTypeId),
-      status: roomStatus,
-    },
   });
 
   const {
@@ -85,10 +71,11 @@ const EditRoom = ({
     try {
       setLoading(true);
 
-      await updateRoom(roomId, {
-        number: formData.roomNumber,
-        typeId: Number(formData.typeId),
-        status: formData.status,
+      await createHousekeepingTask({
+        description: formData.description,
+        roomId: Number(formData.roomId),
+        assignedToId: Number(formData.userid),
+        assignedById: assignedBy.id,
       });
 
       setLoading(false);
@@ -107,28 +94,29 @@ const EditRoom = ({
           className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
           variant="ghost"
         >
-          <Edit2Icon className="transform transition-transform hover:scale-110" />
+          <Edit2 className="transform transition-transform hover:scale-110" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Room</DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <FormField
               control={control}
-              name="roomNumber"
+              name="description"
+              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Room Number</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter room number" {...field} />
+                    <Input placeholder="Enter user description" {...field} />
                   </FormControl>
-                  {errors.roomNumber && (
+                  {errors.description && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.roomNumber.message}
+                      {errors.description.message}
                     </p>
                   )}
                 </FormItem>
@@ -137,38 +125,37 @@ const EditRoom = ({
 
             <FormField
               control={control}
-              name="typeId"
+              name="roomId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Room Type</FormLabel>
+                  <FormLabel>rooms</FormLabel>
                   <FormControl>
                     <Select
                       required
                       {...field}
-                      defaultValue="1"
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select room type" />
+                        <SelectValue placeholder="Select room" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Room Type</SelectLabel>
-                          {roomTypes.map((roomType) => (
+                          <SelectLabel>rooms</SelectLabel>
+                          {rooms.map((room) => (
                             <SelectItem
-                              key={roomType.id}
-                              value={roomType.id.toString()}
+                              key={room.id}
+                              value={room.id.toString()}
                             >
-                              {roomType.name}
+                              {room.number}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {errors.typeId && (
+                  {errors.roomId && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.typeId.message}
+                      {errors.roomId.message}
                     </p>
                   )}
                 </FormItem>
@@ -177,10 +164,10 @@ const EditRoom = ({
 
             <FormField
               control={control}
-              name="status"
+              name="userid"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>Assigned to</FormLabel>
                   <FormControl>
                     <Select
                       required
@@ -188,34 +175,26 @@ const EditRoom = ({
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder="Select user" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Status</SelectLabel>
-                          {statusOptions.map((status) => (
+                          <SelectLabel>users</SelectLabel>
+                          {users.map((user) => (
                             <SelectItem
-                              disabled={
-                                (roomStatus === RoomStatus.AVAILABLE &&
-                                  status === RoomStatus.OCCUPIED) ||
-                                (roomStatus === RoomStatus.OCCUPIED &&
-                                  status === RoomStatus.AVAILABLE) ||
-                                (roomStatus === RoomStatus.MAINTENANCE &&
-                                  status === RoomStatus.OCCUPIED)
-                              }
-                              key={status}
-                              value={status}
+                              key={user.id}
+                              value={user.id.toString()}
                             >
-                              {status}
+                              {user.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {errors.status && (
+                  {errors.userid && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.status.message}
+                      {errors.userid.message}
                     </p>
                   )}
                 </FormItem>
@@ -238,4 +217,4 @@ const EditRoom = ({
   );
 };
 
-export default EditRoom;
+export default AddHouseKeepingTask;

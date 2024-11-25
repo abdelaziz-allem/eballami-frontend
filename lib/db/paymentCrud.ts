@@ -3,10 +3,47 @@
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
 import { CreatePayment, Payment, UpdatePayment } from "../types/type";
 
-export async function getPayments(): Promise<Payment[]> {
+const headers = getAuthHeaders();
+
+export async function getPayments(
+  from?: string,
+  to?: string
+): Promise<Payment[]> {
   try {
-    const headers = await getAuthHeaders();
-    const response = await axiosInstance.get("/payment", { headers });
+    const response = await axiosInstance.get("/payment", {
+      headers,
+      params: {
+        ...(from && { from }),
+        ...(to && { to }),
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching payments:", error);
+    throw new Error("Failed to fetch payments");
+  }
+}
+
+export async function getTodayPayment(): Promise<Payment[]> {
+  try {
+    const response = await axiosInstance.get(`/payment/today`, {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching payments:", error);
+    throw new Error("Failed to fetch payments");
+  }
+}
+
+export async function getAllBookingPayments(
+  bookingId: number
+): Promise<Payment[]> {
+  try {
+    const response = await axiosInstance.get(`/payment/booking/${bookingId}`, {
+      headers,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching payments:", error);
@@ -18,7 +55,6 @@ export const createPayment = async (
   paymentData: CreatePayment
 ): Promise<Payment> => {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.post("/payment", paymentData, {
       headers,
     });
@@ -34,7 +70,6 @@ export async function updatePayment(
   updatedData: UpdatePayment
 ): Promise<Payment> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.put(
       `/payment/${paymentId}`,
       updatedData,
@@ -51,7 +86,6 @@ export async function updatePayment(
 
 export async function deletePayment(id: number): Promise<void> {
   try {
-    const headers = await getAuthHeaders();
     await axiosInstance.delete(`/payment/${id}`, { headers });
   } catch (error) {
     console.error("Error deleting payment:", error);

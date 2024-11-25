@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import AddRoom from "./AddRoom";
 import EditRoom from "./EditRoom";
 import { Badge } from "@/components/ui/badge";
-import { Room, RoomType, Status } from "@/lib/types/type";
+import { Room, RoomType } from "@/lib/types/type";
+import { getRoomStatusColor } from "@/lib/utils";
 
 interface RoomsProps {
   rooms: Room[];
@@ -30,17 +31,6 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-  };
-
-  const getStatusColor = (status: Status) => {
-    switch (status) {
-      case Status.OCCUPIED:
-        return "bg-green-500 hover:bg-green-600";
-      case Status.AVAILABLE:
-        return "bg-blue-500 hover:bg-blue-600";
-      default:
-        return "bg-gray-500 hover:bg-gray-600";
-    }
   };
 
   return (
@@ -80,7 +70,7 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge className={getStatusColor(room.status)}>
+                <Badge className={getRoomStatusColor(room.status)}>
                   {room.status}
                 </Badge>
               </TableCell>
@@ -92,6 +82,7 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
                   roomId={room.id}
                   roomNumber={room.number}
                   roomTypeId={room.type.id}
+                  roomStatus={room.status}
                   roomTypes={roomTypes}
                 />
               </TableCell>

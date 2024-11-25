@@ -3,9 +3,10 @@
 import { CreateRoomType, RoomType, UpdateRoomType } from "../types/type";
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
 
+const headers = getAuthHeaders();
+
 export async function getRoomTypes(): Promise<RoomType[]> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.get("/room-type", { headers });
     return response.data;
   } catch (error) {
@@ -18,7 +19,6 @@ export const createRoomType = async (
   roomTypeData: CreateRoomType
 ): Promise<RoomType> => {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.post("/room-type", roomTypeData, {
       headers,
     });
@@ -34,7 +34,6 @@ export const updateRoomType = async (
   roomTypeData: UpdateRoomType
 ): Promise<RoomType> => {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.put(
       `/room-type/${roomTypeId}`,
       roomTypeData,

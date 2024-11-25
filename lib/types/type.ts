@@ -31,13 +31,13 @@ export interface Room {
   id: number;
   number: string;
   typeId: number;
-  status: Status;
+  status: RoomStatus;
   createdAt: string;
   updatedAt: string;
   type: {
     id: number;
     name: string;
-    pricePerNight: number;
+    pricePerNight: string;
   };
 }
 
@@ -49,23 +49,47 @@ export interface CreateRoom {
 export interface UpdateRoom {
   number?: string;
   typeId?: number;
-  status?: Status;
+  status?: RoomStatus;
 }
 
-export enum Status {
+export enum RoomStatus {
   OCCUPIED = "Occupied",
   AVAILABLE = "Available",
+  MAINTENANCE = "Maintenance",
 }
 
 //ROOM END//
+
+//RATES START//
+
+export interface Rate {
+  id: number;
+  bookingId: number;
+  startDate: string;
+  endDate?: string;
+  amount: string;
+}
+
+export interface CreateRate {
+  bookingId: number;
+  startDate: Date;
+  endDate?: Date;
+  amount: string;
+}
+
+export interface UpdateRate {
+  bookingId?: number;
+  startDate?: Date;
+  endDate?: Date;
+  amount?: string;
+}
+//RATES END//
 
 //USER START//
 
 export enum ROLE {
   ADMIN = "Admin",
   RECEPTION = "Reception",
-  CASHIER = "Cashier",
-  WAITER = "Waiter",
   HOUSEKEEPING = "HouseKeeping",
   HOUSEKEEPING_ADMIN = "HouseKeepingAdmin",
 }
@@ -144,11 +168,44 @@ export interface UpdateGuest {
 }
 //GUESTS END//
 
+//PAYMENTS START//
+
+export enum PaymentMethod {
+  CASH = "Cash",
+  BANK = "Bank",
+  ZAAD = "Zaad",
+  EDAHAB = "Edahab",
+}
+
+export interface Payment {
+  id: number;
+  bookingId: number;
+  amount: string;
+  method: PaymentMethod;
+  createdAt: string;
+  updatedAt: string;
+  booking: Booking;
+}
+
+export interface CreatePayment {
+  bookingId: number;
+  amount: string;
+  method: string;
+}
+
+export interface UpdatePayment {
+  bookingId?: number;
+  amount?: string;
+  method?: string;
+}
+//PAYMENTS END//
+
 //BOOKINGS START//
 
 export enum BookingStatus {
   CHECKED_IN = "CheckedIn",
-  CHECKED_out = "CheckedOut",
+  CHECKED_OUT = "CheckedOut",
+  BOOKED = "Booked",
 }
 
 export interface Booking {
@@ -160,7 +217,7 @@ export interface Booking {
   status: BookingStatus;
   room: {
     number: string;
-    status: Status;
+    status: RoomStatus;
     type: {
       name: string;
       pricePerNight: number;
@@ -186,5 +243,71 @@ export interface UpdateBooking {
   guestId?: number;
   checkInDate?: Date;
   checkOutDate?: Date;
+  status?: BookingStatus;
 }
 //BOOKINGS END//
+
+// HousekeepingTask Start //
+
+export enum TaskStatus {
+  PENDING = "Pending",
+  DONE = "Done",
+  CANCELLED = "Cancelled",
+}
+
+export interface HousekeepingTask {
+  id: number;
+  roomId: number;
+  description: string;
+  assignedById: number;
+  assignedToId: number;
+  status: TaskStatus;
+  createdAt: string;
+  updatedAt: string;
+  assignedBy: {
+    id: number;
+    name: string;
+    mobileNumber: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  assignedTo: {
+    id: number;
+    name: string;
+    mobileNumber: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  room: {
+    id: number;
+    number: string;
+    typeId: number;
+    status: RoomStatus;
+    createdAt: string;
+    updatedAt: string;
+    type: {
+      id: number;
+      name: string;
+      pricePerNight: string;
+    };
+  };
+}
+
+export interface CreateHousekeepingTask {
+  roomId: number;
+  description: string;
+  assignedById: number;
+  assignedToId: number;
+}
+
+export interface UpdateHousekeepingTask {
+  roomId?: number;
+  description?: string;
+  assignedById?: number;
+  assignedToId?: number;
+  status?: TaskStatus;
+}
+
+//HousekeepingTask End//

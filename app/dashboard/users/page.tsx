@@ -8,9 +8,7 @@ const UsersPage = async () => {
   let error: string | null = null;
 
   try {
-    const fetchedUsers = await getUsers();
-
-    users = fetchedUsers;
+    users = await getUsers();
   } catch (err) {
     console.error("Error fetching users:", err);
     error = "Failed to load users. Please try again later.";

@@ -34,6 +34,38 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
+  const role = payload?.role;
+  const url = request.nextUrl;
+
+  if (url.pathname === "/dashboard") {
+    return NextResponse.next();
+  }
+
+  const routeAccess: Record<string, string[]> = {
+    Admin: ["/dashboard"],
+    Reception: [
+      "/dashboard/rooms",
+      "/dashboard/room-types",
+      "/dashboard/bookings",
+      "/dashboard/check-ins",
+      "/dashboard/guests",
+      "/dashboard/payments",
+    ],
+    HousekeepingAdmin: ["/dashboard/rooms", "/dashboard/housekeeping"],
+    Housekeeping: ["/dashboard/housekeeping"],
+  };
+
+  const hasAccess = (role: string | undefined, pathname: string): boolean => {
+    if (!role) return false;
+    const accessibleRoutes = routeAccess[role];
+    return accessibleRoutes?.some((route) => pathname.startsWith(route));
+  };
+
+  if (!hasAccess(role, url.pathname)) {
+    console.warn(`Access denied for role: ${role} to ${url.pathname}`);
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   return NextResponse.next();
 }
 

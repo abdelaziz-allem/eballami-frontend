@@ -1,6 +1,6 @@
 import SkeletonDemo from "@/components/SkeletonDemo";
 import { getRooms } from "@/lib/db/roomCrud";
-import { Booking, Room } from "@/lib/types/type";
+import { Booking, BookingStatus, Room } from "@/lib/types/type";
 import Bookings from "./Booking";
 import { getBookings } from "@/lib/db/bookingCrud";
 
@@ -10,10 +10,8 @@ const BookingPage = async () => {
   let error: string | null = null;
 
   try {
-    const fetchedData = await getRooms();
-    const fetchedBookings = await getBookings();
-    bookings = fetchedBookings;
-    rooms = fetchedData;
+    rooms = await getRooms();
+    bookings = await getBookings(BookingStatus.CHECKED_IN);
   } catch (err) {
     console.error("Error fetching roomTypes:", err);
     error = "Failed to load roomTypes. Please try again later.";

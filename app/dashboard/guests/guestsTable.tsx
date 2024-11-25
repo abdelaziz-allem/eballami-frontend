@@ -11,8 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import AddGuest from "./AddGuest";
-import EditGuest from "./EditGuest";
 import { Guest } from "@/lib/types/type";
 
 interface RoomsProps {
@@ -33,7 +31,6 @@ const GuestsTable = ({ guests }: RoomsProps) => {
   return (
     <div className="mx-6 rounded-lg border p-4 shadow-sm">
       <div className="flex gap-3 mb-4">
-        {/* <AddGuest /> */}
         <Input
           className="w-auto"
           placeholder="Search by room number..."
@@ -66,13 +63,6 @@ const GuestsTable = ({ guests }: RoomsProps) => {
 
               <TableCell>
                 {new Date(guest.createdAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                {/* <EditGuest
-                  guestId={guest.id}
-                  guestName={guest.name}
-                  pricePerNight={guest.pricePerNight}
-                /> */}
               </TableCell>
             </TableRow>
           ))}

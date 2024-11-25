@@ -3,9 +3,10 @@
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
 import { CreateRoom, Room, UpdateRoom } from "../types/type";
 
+const headers = getAuthHeaders();
+
 export async function getRooms(): Promise<Room[]> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.get("/room", { headers });
     return response.data;
   } catch (error) {
@@ -16,7 +17,6 @@ export async function getRooms(): Promise<Room[]> {
 
 export const createRoom = async (roomData: CreateRoom): Promise<Room> => {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.post("/room", roomData, { headers });
     return response.data;
   } catch (error) {
@@ -30,7 +30,6 @@ export async function updateRoom(
   updatedData: UpdateRoom
 ): Promise<Room> {
   try {
-    const headers = await getAuthHeaders();
     const response = await axiosInstance.put(`/room/${roomId}`, updatedData, {
       headers,
     });
@@ -43,7 +42,6 @@ export async function updateRoom(
 
 export async function deleteRoom(id: number): Promise<void> {
   try {
-    const headers = await getAuthHeaders();
     await axiosInstance.delete(`/room/${id}`, { headers });
   } catch (error) {
     console.error("Error deleting room:", error);
