@@ -57,10 +57,12 @@ export const getRoleColor = (status: ROLE) => {
 };
 
 export const calculateNights = (checkInDate: string): number => {
-  const oneDay = 24 * 60 * 60 * 1000;
   const checkIn = new Date(checkInDate);
   const checkOut = new Date();
-  return Math.round(
-    Math.abs((checkIn.getTime() - checkOut.getTime()) / oneDay)
-  );
+
+  const diffInMilliseconds = checkOut.getTime() - checkIn.getTime();
+
+  const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+
+  return diffInDays + 1;
 };
