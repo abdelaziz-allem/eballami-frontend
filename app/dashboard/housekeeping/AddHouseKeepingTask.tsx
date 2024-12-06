@@ -31,10 +31,10 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Edit2 } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { Room, User, userInSessionType } from "@/lib/types/type";
 import { createHousekeepingTask } from "@/lib/db/houseKeepingTaskCrud";
+import { toast } from "@/hooks/use-toast";
 
 const schema = z.object({
   description: z.string().min(1, "HousekeepingTask number is required"),
@@ -78,6 +78,11 @@ const AddHouseKeepingTask = ({
         assignedById: assignedBy.id,
       });
 
+      toast({
+        title: "Task created successfully",
+        className: "bg-primary_color-500 text-white",
+      });
+
       setLoading(false);
       setDialogOpen(false);
       router.refresh();
@@ -91,10 +96,10 @@ const AddHouseKeepingTask = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
-          variant="ghost"
+          variant="default"
+          className="bg-primary_color-500 hover:bg-primary_color-600 text-white"
         >
-          <Edit2 className="transform transition-transform hover:scale-110" />
+          New task
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -205,7 +210,7 @@ const AddHouseKeepingTask = ({
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

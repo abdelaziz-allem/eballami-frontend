@@ -3,9 +3,8 @@
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
 import { CreateGuest, Guest, UpdateGuest } from "../types/type";
 
-const headers = getAuthHeaders();
-
 export async function getGuests(): Promise<Guest[]> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get("/guest", { headers });
     return response.data;
@@ -16,6 +15,7 @@ export async function getGuests(): Promise<Guest[]> {
 }
 
 export const createGuest = async (guestData: CreateGuest): Promise<Guest> => {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.post("/guest", guestData, { headers });
     return response.data;
@@ -29,6 +29,7 @@ export async function updateGuest(
   guestId: number,
   updatedData: UpdateGuest
 ): Promise<Guest> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.put(`/guest/${guestId}`, updatedData, {
       headers,
@@ -41,6 +42,7 @@ export async function updateGuest(
 }
 
 export async function deleteGuest(id: number): Promise<void> {
+  const headers = getAuthHeaders();
   try {
     await axiosInstance.delete(`/guest/${id}`, { headers });
   } catch (error) {

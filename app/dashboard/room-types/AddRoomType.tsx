@@ -21,9 +21,9 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { createRoomType } from "@/lib/db/roomTypesCrud";
+import { toast } from "@/hooks/use-toast";
 
 const schema = z.object({
   type: z.string().min(1, "Room number is required"),
@@ -56,6 +56,11 @@ const AddRoomType = () => {
         pricePerNight: formData.price,
       });
 
+      toast({
+        title: "Room type created successfully",
+        className: "bg-primary_color-500 ",
+      });
+
       setLoading(false);
       setDialogOpen(false);
       router.refresh();
@@ -69,10 +74,10 @@ const AddRoomType = () => {
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
-          variant="ghost"
+          variant="default"
+          className="bg-primary_color-500 hover:bg-primary_color-600 text-white"
         >
-          <Plus className="transform transition-transform hover:scale-110" />
+          New type
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -124,7 +129,7 @@ const AddRoomType = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

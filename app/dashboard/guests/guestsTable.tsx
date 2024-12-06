@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Guest } from "@/lib/types/type";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface RoomsProps {
   guests: Guest[];
@@ -29,46 +29,44 @@ const GuestsTable = ({ guests }: RoomsProps) => {
   };
 
   return (
-    <div className="mx-6 rounded-lg border p-4 shadow-sm">
-      <div className="flex gap-3 mb-4">
-        <Input
-          className="w-auto"
-          placeholder="Search by room number..."
-          value={search}
-          onChange={handleInputChange}
-        />
-      </div>
+    <Card className="w-full border-none shadow-none">
+      <CardContent>
+        <div className="flex gap-3 mb-4">
+          <Input
+            className="w-auto"
+            placeholder="Search by room number..."
+            value={search}
+            onChange={handleInputChange}
+          />
+        </div>
 
-      <Table>
-        <TableCaption className="font-bold mb-2 text-center">
-          A list of guests.
-        </TableCaption>
-
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Mobile #</TableHead>
-            <TableHead>first booking</TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {currentGuests.map((guest) => (
-            <TableRow key={guest.id}>
-              <TableCell>
-                {guest.firstName} {guest.lastName}
-              </TableCell>
-              <TableCell>{guest.mobileNumber}</TableCell>
-
-              <TableCell>
-                {new Date(guest.createdAt).toLocaleDateString()}
-              </TableCell>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Mobile #</TableHead>
+              <TableHead>first booking</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+
+          <TableBody>
+            {currentGuests.map((guest) => (
+              <TableRow key={guest.id}>
+                <TableCell>
+                  {guest.firstName} {guest.lastName}
+                </TableCell>
+                <TableCell>{guest.mobileNumber}</TableCell>
+
+                <TableCell>
+                  {new Date(guest.createdAt).toLocaleDateString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 };
 

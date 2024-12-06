@@ -82,7 +82,7 @@ const EditRoomType = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
+          className="rounded-full p-2 text-primary_color-500 transition-colors duration-300 ease-in-out hover:bg-primary_color-100 hover:text-primary_color-500"
           variant="ghost"
         >
           <Edit2 className="transform transition-transform hover:scale-110" />
@@ -90,7 +90,7 @@ const EditRoomType = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Room Type</DialogTitle>
+          <DialogTitle>Edit Room Type</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>
@@ -137,7 +137,7 @@ const EditRoomType = ({
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

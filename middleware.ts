@@ -47,7 +47,6 @@ export function middleware(request: NextRequest) {
       "/dashboard/rooms",
       "/dashboard/room-types",
       "/dashboard/bookings",
-      "/dashboard/check-ins",
       "/dashboard/guests",
       "/dashboard/payments",
     ],

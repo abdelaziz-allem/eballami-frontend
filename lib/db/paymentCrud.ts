@@ -1,14 +1,18 @@
 "use server";
 
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
-import { CreatePayment, Payment, UpdatePayment } from "../types/type";
-
-const headers = getAuthHeaders();
+import {
+  CreatePayment,
+  MonthlyPayments,
+  Payment,
+  UpdatePayment,
+} from "../types/type";
 
 export async function getPayments(
   from?: string,
   to?: string
 ): Promise<Payment[]> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get("/payment", {
       headers,
@@ -25,9 +29,10 @@ export async function getPayments(
   }
 }
 
-export async function getTodayPayment(): Promise<Payment[]> {
+export async function getPaymentsByMonth(): Promise<MonthlyPayments[]> {
+  const headers = getAuthHeaders();
   try {
-    const response = await axiosInstance.get(`/payment/today`, {
+    const response = await axiosInstance.get(`/payment/monthly`, {
       headers,
     });
     return response.data;
@@ -40,6 +45,7 @@ export async function getTodayPayment(): Promise<Payment[]> {
 export async function getAllBookingPayments(
   bookingId: number
 ): Promise<Payment[]> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get(`/payment/booking/${bookingId}`, {
       headers,
@@ -54,6 +60,7 @@ export async function getAllBookingPayments(
 export const createPayment = async (
   paymentData: CreatePayment
 ): Promise<Payment> => {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.post("/payment", paymentData, {
       headers,
@@ -69,6 +76,7 @@ export async function updatePayment(
   paymentId: number,
   updatedData: UpdatePayment
 ): Promise<Payment> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.put(
       `/payment/${paymentId}`,
@@ -85,6 +93,7 @@ export async function updatePayment(
 }
 
 export async function deletePayment(id: number): Promise<void> {
+  const headers = getAuthHeaders();
   try {
     await axiosInstance.delete(`/payment/${id}`, { headers });
   } catch (error) {

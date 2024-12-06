@@ -25,6 +25,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -39,7 +40,15 @@ import {
 import { Room, RoomStatus } from "@/lib/types/type";
 import { updateBooking } from "@/lib/db/bookingCrud";
 import { updateRoom } from "@/lib/db/roomCrud";
-import { create } from "zustand";
+import { ArrowLeftRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const schema = z.object({
   rate: z.string().min(1, "Price is required"),
@@ -51,12 +60,10 @@ type FormData = z.infer<typeof schema>;
 const Transfer = ({
   bookingId,
   currentRoomId,
-  onClose,
   rooms,
 }: {
   bookingId: number;
   currentRoomId: number;
-  onClose: () => void;
   rooms: Room[];
 }) => {
   const [loading, setLoading] = useState(false);
@@ -83,14 +90,22 @@ const Transfer = ({
         status: RoomStatus.OCCUPIED,
       });
       await updateRoom(currentRoomId, { status: RoomStatus.MAINTENANCE });
+      const latest = await getLatestRateOfBooking(bookingId);
+
+      await updateRate(latest.id, {
+        endDate: new Date(),
+      });
       await createRate({
         bookingId: bookingId,
         amount: formData.rate,
         startDate: new Date(),
       });
-
-      onClose();
+      toast({
+        title: `Guest has transfered`,
+        className: "bg-primary_color-500 text-white",
+      });
       setLoading(false);
+      setDialogOpen(false);
       router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
@@ -101,7 +116,21 @@ const Transfer = ({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Transfer</Button>
+        <div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <ArrowLeftRight
+                  className="transform transition-transform hover:scale-110 text-emerald-500 cursor-pointer"
+                  size={30}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Transfer</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -144,6 +173,10 @@ const Transfer = ({
                               disabled={room.status === RoomStatus.OCCUPIED}
                             >
                               {room.number}
+                              {"  "}
+                              <Badge className="bg-primary_color-500  hover:bg-primary_color-600">
+                                {room.type.name}
+                              </Badge>
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -178,13 +211,15 @@ const Transfer = ({
               )}
             />
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-            >
-              {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
-            </Button>
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="rounded bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600"
+              >
+                {loading ? <LoadingSpinner className="mr-2" /> : "Transfer"}
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

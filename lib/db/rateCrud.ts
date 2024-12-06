@@ -3,9 +3,8 @@
 import { axiosInstance, getAuthHeaders } from "./axiosInstance";
 import { CreateRate, Rate, UpdateRate } from "../types/type";
 
-const headers = getAuthHeaders();
-
 export async function getRates(): Promise<Rate[]> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get("/rate", { headers });
     return response.data;
@@ -16,6 +15,7 @@ export async function getRates(): Promise<Rate[]> {
 }
 
 export async function getLatestRateOfBooking(bookingId: number): Promise<Rate> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get(`/rate/latest/${bookingId}`, {
       headers,
@@ -28,6 +28,7 @@ export async function getLatestRateOfBooking(bookingId: number): Promise<Rate> {
 }
 
 export async function getRatesOfBooking(bookingId: number): Promise<Rate[]> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get(`/rate/booking/${bookingId}`, {
       headers,
@@ -40,6 +41,7 @@ export async function getRatesOfBooking(bookingId: number): Promise<Rate[]> {
 }
 
 export const createRate = async (rateData: CreateRate): Promise<Rate> => {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.post("/rate", rateData, { headers });
     return response.data;
@@ -53,6 +55,7 @@ export async function updateRate(
   rateId: number,
   updatedData: UpdateRate
 ): Promise<Rate> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.put(`/rate/${rateId}`, updatedData, {
       headers,
@@ -65,6 +68,7 @@ export async function updateRate(
 }
 
 export async function deleteRate(id: number): Promise<void> {
+  const headers = getAuthHeaders();
   try {
     await axiosInstance.delete(`/rate/${id}`, { headers });
   } catch (error) {

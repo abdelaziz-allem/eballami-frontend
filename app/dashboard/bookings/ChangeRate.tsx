@@ -21,6 +21,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading";
 import {
@@ -28,6 +34,7 @@ import {
   getLatestRateOfBooking,
   updateRate,
 } from "@/lib/db/rateCrud";
+import { Split } from "lucide-react";
 
 const schema = z.object({
   rate: z.string().min(1, "Price is required"),
@@ -35,13 +42,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const ChangeRate = ({
-  bookingId,
-  onClose,
-}: {
-  bookingId: number;
-  onClose: () => void;
-}) => {
+const ChangeRate = ({ bookingId }: { bookingId: number }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
@@ -71,7 +72,6 @@ const ChangeRate = ({
         amount: formData.rate,
         startDate: new Date(),
       });
-      onClose();
       setLoading(false);
       router.refresh();
     } catch (error) {
@@ -83,7 +83,21 @@ const ChangeRate = ({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Change Rate</Button>
+        <div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Split
+                  size={30}
+                  className="transform transition-transform hover:scale-110 text-primary_color-500 cursor-pointer"
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Change rate</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -111,13 +125,15 @@ const ChangeRate = ({
               )}
             />
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-            >
-              {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
-            </Button>
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
+              >
+                {loading ? <LoadingSpinner className="mr-2" /> : "Change"}
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

@@ -19,8 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// import { createRoom } from "@/lib/db/roomCrud";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,6 +34,7 @@ import { Edit2Icon } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { RoomType, RoomStatus } from "@/lib/types/type";
 import { updateRoom } from "@/lib/db/roomCrud";
+import { toast } from "@/hooks/use-toast";
 
 const statusOptions = Object.values(RoomStatus);
 
@@ -91,6 +90,11 @@ const EditRoom = ({
         status: formData.status,
       });
 
+      toast({
+        title: "Room updated successfully",
+        className: "bg-primary_color-500 text-white",
+      });
+
       setLoading(false);
       setDialogOpen(false);
       router.refresh();
@@ -104,7 +108,7 @@ const EditRoom = ({
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
+          className="rounded-full p-2 text-primary_color-500 transition-colors duration-300 ease-in-out hover:bg-primary_color-100 hover:text-primary_color-500"
           variant="ghost"
         >
           <Edit2Icon className="transform transition-transform hover:scale-110" />
@@ -226,7 +230,7 @@ const EditRoom = ({
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

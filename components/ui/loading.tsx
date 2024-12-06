@@ -86,6 +86,5 @@ export const LoadingSpinner = ({
         />
       </circle>
     </svg>
-
   );
 };

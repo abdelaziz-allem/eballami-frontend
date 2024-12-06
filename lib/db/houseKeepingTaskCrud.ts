@@ -7,9 +7,8 @@ import {
   UpdateHousekeepingTask,
 } from "../types/type";
 
-const headers = getAuthHeaders();
-
 export async function getHousekeepingTasks(): Promise<HousekeepingTask[]> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.get("/housekeeping", { headers });
     return response.data;
@@ -22,6 +21,7 @@ export async function getHousekeepingTasks(): Promise<HousekeepingTask[]> {
 export const createHousekeepingTask = async (
   taskData: CreateHousekeepingTask
 ): Promise<HousekeepingTask> => {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.post("/housekeeping", taskData, {
       headers,
@@ -37,6 +37,7 @@ export async function updateHousekeepingTask(
   housekeepingTaskId: number,
   updatedData: UpdateHousekeepingTask
 ): Promise<HousekeepingTask> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.put(
       `/housekeeping/${housekeepingTaskId}`,
@@ -53,6 +54,7 @@ export async function updateHousekeepingTask(
 }
 
 export async function deleteHousekeepingTask(id: number): Promise<void> {
+  const headers = getAuthHeaders();
   try {
     await axiosInstance.delete(`/housekeeping/${id}`, { headers });
   } catch (error) {

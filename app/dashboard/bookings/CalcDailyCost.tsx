@@ -1,35 +1,51 @@
-import { useTotalCostStore, useBookingBalanceStore } from "@/app/store";
 import { getAllBookingPayments } from "@/lib/db/paymentCrud";
 import { getRatesOfBooking } from "@/lib/db/rateCrud";
-import { Rate } from "@/lib/types/type";
+import { Booking, Rate, Room, userInSessionType } from "@/lib/types/type";
 import React, { useEffect, useState } from "react";
+import { CheckOut } from "./CheckOut";
+import Transfer from "./Transfer";
+import ChangeRate from "./ChangeRate";
+import Pay from "./Pay";
+import { formatDate } from "@/lib/utils";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-// Helper function to get all dates between a start and end date
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Image from "next/image";
+
 const getDatesInRange = (startDate: Date, endDate: Date): string[] => {
   const dates: string[] = [];
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
-    dates.push(currentDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
+    dates.push(currentDate.toISOString().split("T")[0]);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
   return dates;
 };
 
-// Function to calculate daily costs based on rates
 const calculateDailyCosts = (
   rates: Rate[]
 ): { date: string; cost: number }[] => {
   if (rates.length === 0) return [];
 
-  const today = new Date(); // Current date
-
-  // Get the earliest startDate and the latest endDate (using today if endDate is null)
-  const startDate = new Date(rates[0].startDate.split("T")[0]); // First date
+  const today = new Date();
+  const startDate = new Date(rates[0].startDate.split("T")[0]);
   const endDate = new Date(
     rates.reduce((latest, rate) => {
-      // If endDate is null, treat it as today's date
       const effectiveEndDate = rate.endDate
         ? rate.endDate
         : today.toISOString();
@@ -46,9 +62,8 @@ const calculateDailyCosts = (
       const rateStart = new Date(rate.startDate.split("T")[0]);
       const rateEnd = rate.endDate
         ? new Date(rate.endDate.split("T")[0])
-        : today; // Use current date if endDate is null
+        : today;
 
-      // If the rate covers this date, add its cost
       if (rateStart <= new Date(date) && rateEnd >= new Date(date)) {
         total += parseFloat(rate.amount);
       }
@@ -59,10 +74,21 @@ const calculateDailyCosts = (
   });
 };
 
-const CalcDailyCost = ({ bookingId }: { bookingId: number }) => {
-  const { totalCost, setTotalCost } = useTotalCostStore();
-  const { setBookingBalance } = useBookingBalanceStore();
+const CalcDailyCost = ({
+  rooms,
+  booking,
+  getResults,
+  getDailyCosts,
+  userInSession,
+}: {
+  booking: Booking;
+  rooms: Room[];
+  getResults?: boolean;
+  getDailyCosts?: boolean;
+  userInSession: userInSessionType;
+}) => {
   const [paidAmount, setPaidAmount] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
 
   const [dailyCosts, setDailyCosts] = useState<
     { date: string; cost: number }[]
@@ -71,12 +97,12 @@ const CalcDailyCost = ({ bookingId }: { bookingId: number }) => {
   useEffect(() => {
     const fetchRates = async () => {
       try {
-        const result = await getRatesOfBooking(bookingId);
+        const result = await getRatesOfBooking(booking.id);
         if (!result) {
           throw new Error("Rates data is null or undefined.");
         }
 
-        const bookingPayments = await getAllBookingPayments(bookingId);
+        const bookingPayments = await getAllBookingPayments(booking.id);
         if (!Array.isArray(bookingPayments)) {
           throw new Error("Invalid format for booking payments data.");
         }
@@ -92,50 +118,116 @@ const CalcDailyCost = ({ bookingId }: { bookingId: number }) => {
           throw new Error("Daily costs calculation did not return an array.");
         }
         setDailyCosts(costs);
-
         const total = costs.reduce((sum, { cost }) => {
           return sum + (typeof cost === "number" ? cost : 0);
         }, 0);
         setTotalCost(total);
-        setBookingBalance(total - paidBookingAmount);
       } catch (error) {
         console.error("Error fetching rates or processing data:", error);
       }
     };
 
     fetchRates();
-  }, [bookingId]);
+  }, [booking.id]);
 
   return (
-    <div className="max-w-3xl mx-auto p-6 ">
-      <div className="border  rounded-md overflow-hidden">
-        <div className="grid grid-cols-2   font-semibold py-3 px-4">
-          <span>Date</span>
-          <span className="text-right">Cost</span>
-        </div>
-        <div className="h-32 overflow-y-scroll">
-          {dailyCosts.map(({ date, cost }) => (
-            <div key={date} className="grid grid-cols-2 py-3 px-4 border-t ">
-              <span>{date}</span>
-              <span className="text-right">${cost.toFixed(2)}</span>
+    <>
+      {getResults && (
+        <>
+          <TableCell className="text-lg py-6">$ {totalCost}</TableCell>
+          <TableCell className="text-lg py-6">$ {paidAmount}</TableCell>
+          <TableCell
+            className={`text-lg py-6 ${
+              totalCost - paidAmount > 100 && "text-red-500"
+            }`}
+          >
+            $ {totalCost - paidAmount}
+          </TableCell>
+          <TableCell className="py-6">
+            <div className="flex items-center justify-end gap-6">
+              <Transfer
+                bookingId={booking.id}
+                currentRoomId={booking.roomId}
+                rooms={rooms}
+              />
+              <ChangeRate bookingId={booking.id} />
+              <Pay bookingId={booking.id} userId={userInSession.id} />
+              {totalCost - paidAmount === 0 && <CheckOut booking={booking} />}
             </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 py-3 px-4  font-semibold  border-t ">
-          <span>Total</span>
-          <span className="text-right">${totalCost.toFixed(2)}</span>
-        </div>
-        <div className="grid grid-cols-2 py-3 px-4  font-semibold  border-t ">
-          <span>Paid Amount</span>
-          <span className="text-right">${paidAmount.toFixed(2)}</span>
-        </div>
+          </TableCell>
+        </>
+      )}
 
-        <div className="grid grid-cols-2 py-3 px-4  font-semibold  border-t ">
-          <span>Balance</span>
-          <span className="text-right"> ${totalCost - paidAmount}</span>
-        </div>
-      </div>
-    </div>
+      {getDailyCosts && (
+        <>
+          <Card className="border-none shadow-none">
+            <CardHeader className="flex flex-col sm:flex-row items-center gap-4 pb-8">
+              <Image
+                src="/user_profile.png"
+                alt="User avatar"
+                width={150}
+                height={150}
+              />
+              <div className="text-center sm:text-left space-y-1">
+                <CardTitle className="text-3xl font-bold">
+                  {booking.guest.firstName} {booking.guest.lastName}
+                </CardTitle>
+                <CardDescription className="text-xl ">
+                  {booking.guest.email}
+                </CardDescription>
+                <div className="flex gap-2 ">
+                  <Transfer
+                    bookingId={booking.id}
+                    currentRoomId={booking.roomId}
+                    rooms={rooms}
+                  />
+                  <ChangeRate bookingId={booking.id} />
+                  <Pay bookingId={booking.id} userId={userInSession.id} />
+                  {totalCost - paidAmount === 0 && (
+                    <CheckOut booking={booking} />
+                  )}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-primary/5 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold">$ {totalCost}</div>
+                  <div className="text-sm text-muted-foreground">Amount</div>
+                </div>
+                <div className="bg-primary/5 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold">$ {paidAmount}</div>
+                  <div className="text-sm text-muted-foreground">Paid</div>
+                </div>
+                <div className="bg-primary/5 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold">
+                    $ {totalCost - paidAmount}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Balance</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Amount</TableHead>
+                <TableHead>Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {dailyCosts.map(({ date, cost }) => (
+                <TableRow key={date}>
+                  <TableCell>{formatDate(date)}</TableCell>
+                  <TableCell>${cost.toFixed(2)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </>
+      )}
+    </>
   );
 };
 

@@ -31,10 +31,10 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { createUser } from "@/lib/db/userCrud";
 import { ROLE } from "@/lib/types/type";
+import { toast } from "@/hooks/use-toast";
 const roleOptions = Object.values(ROLE);
 
 const schema = z.object({
@@ -72,23 +72,27 @@ const AddUser = () => {
         role: formData.role,
       });
 
-      setLoading(false);
+      toast({
+        title: "User created successfully",
+        className: "bg-primary_color-500 text-white",
+      });
+
       setDialogOpen(false);
       router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
-      setLoading(false);
     }
+    setLoading(false);
   }
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
-          variant="ghost"
+          variant="default"
+          className="bg-primary_color-500 hover:bg-primary_color-600 text-white"
         >
-          <Plus className="transform transition-transform hover:scale-110" />
+          New user
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -195,7 +199,7 @@ const AddUser = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

@@ -8,20 +8,28 @@ import {
   BookingStatus,
 } from "../types/type";
 
-const headers = getAuthHeaders();
-
 export async function getBookings(
-  BookingStatus?: BookingStatus
+  bookingStatus?: BookingStatus,
+  isFalse?: false
 ): Promise<Booking[]> {
+  const headers = getAuthHeaders();
   try {
-    if (BookingStatus) {
+    if (bookingStatus && isFalse === undefined) {
       const response = await axiosInstance.get(
-        `/Booking?status=${BookingStatus}`,
+        `/booking?status=${bookingStatus}`,
         { headers }
       );
       return response.data;
+    } else if (bookingStatus && isFalse === false) {
+      const response = await axiosInstance.get(
+        `/booking?status=CheckedIn&isfalse=false`,
+        {
+          headers,
+        }
+      );
+      return response.data;
     }
-    const response = await axiosInstance.get("/Booking", { headers });
+    const response = await axiosInstance.get("/booking", { headers });
     return response.data;
   } catch (error) {
     console.error("Error fetching Bookings:", error);
@@ -29,9 +37,22 @@ export async function getBookings(
   }
 }
 
+export const getBooking = async (id: number): Promise<Booking> => {
+  const headers = getAuthHeaders();
+  try {
+    const response = await axiosInstance.get(`/booking/${id}`, { headers });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Booking:", error);
+    throw new Error("Failed to fetch Booking");
+  }
+};
+
 export const createBooking = async (
   BookingData: CreateBooking
 ): Promise<Booking> => {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.post("/Booking", BookingData, {
       headers,
@@ -47,6 +68,7 @@ export async function updateBooking(
   BookingId: number,
   updatedData: UpdateBooking
 ): Promise<Booking> {
+  const headers = getAuthHeaders();
   try {
     const response = await axiosInstance.put(
       `/Booking/${BookingId}`,
@@ -63,6 +85,7 @@ export async function updateBooking(
 }
 
 export async function deleteBooking(id: number): Promise<void> {
+  const headers = getAuthHeaders();
   try {
     await axiosInstance.delete(`/Booking/${id}`, { headers });
   } catch (error) {

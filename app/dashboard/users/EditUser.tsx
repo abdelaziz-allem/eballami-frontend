@@ -35,6 +35,7 @@ import { Edit2 } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { updateUser } from "@/lib/db/userCrud";
 import { ROLE, User } from "@/lib/types/type";
+import { toast } from "@/hooks/use-toast";
 const roleOptions = Object.values(ROLE);
 
 const schema = z.object({
@@ -71,20 +72,22 @@ const EditUser = ({ user }: { user: User }) => {
         role: formData.role,
       });
 
-      setLoading(false);
-      setDialogOpen(false);
+      toast({
+        title: "User updated successfully",
+        className: "bg-primary_color-500 text-white",
+      });
       router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
-      setLoading(false);
     }
+    setLoading(false);
   }
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-100 hover:text-blue-500"
+          className="rounded-full p-2 text-primary_color-500 transition-colors duration-300 ease-in-out hover:bg-primary_color-100 hover:text-primary_color-500"
           variant="ghost"
         >
           <Edit2 className="transform transition-transform hover:scale-110" />
@@ -175,7 +178,7 @@ const EditUser = ({ user }: { user: User }) => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                className="rounded bg-primary_color-500 px-4 py-2 text-white hover:bg-primary_color-600"
               >
                 {loading ? <LoadingSpinner className="mr-2" /> : "Save"}
               </Button>

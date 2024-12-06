@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -14,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import AddRoomType from "./AddRoomType";
 import EditRoomType from "./EditRoomType";
 import { RoomType } from "@/lib/types/type";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface RoomsProps {
   roomTypes: RoomType[];
@@ -31,52 +32,56 @@ const RoomTypesTable = ({ roomTypes }: RoomsProps) => {
   };
 
   return (
-    <div className="mx-6 rounded-lg border p-4 shadow-sm">
-      <div className="flex gap-3 mb-4">
-        <AddRoomType />
-        <Input
-          className="w-auto"
-          placeholder="Search by room number..."
-          value={search}
-          onChange={handleInputChange}
-        />
-      </div>
+    <Card className="w-full border-none shadow-none">
+      <CardContent>
+        <div className="flex justify-between  mb-4">
+          <Input
+            className="w-auto"
+            placeholder="Search room type..."
+            value={search}
+            onChange={handleInputChange}
+          />
+          <AddRoomType />
+        </div>
 
-      <Table>
-        <TableCaption className="font-bold mb-2 text-center">
-          A list of rooms.
-        </TableCaption>
-
-        <TableHeader>
-          <TableRow>
-            <TableHead>Type</TableHead>
-            <TableHead>Price Per Night</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {currentRoomTypes.map((roomType) => (
-            <TableRow key={roomType.id}>
-              <TableCell>{roomType.name}</TableCell>
-              <TableCell>$ {roomType.pricePerNight}</TableCell>
-
-              <TableCell>
-                {new Date(roomType.createdAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <EditRoomType
-                  roomTypeId={roomType.id}
-                  roomTypeName={roomType.name}
-                  pricePerNight={roomType.pricePerNight}
-                />
-              </TableCell>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Type</TableHead>
+              <TableHead>Price Per Night</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+
+          <TableBody>
+            {currentRoomTypes.map((roomType) => (
+              <TableRow key={roomType.id}>
+                <TableCell>
+                  <Badge
+                    className={`bg-primary_color-500 hover:bg-primary_color-600`}
+                  >
+                    {roomType.name}
+                  </Badge>
+                </TableCell>
+                <TableCell>$ {roomType.pricePerNight}</TableCell>
+
+                <TableCell>
+                  {new Date(roomType.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <EditRoomType
+                    roomTypeId={roomType.id}
+                    roomTypeName={roomType.name}
+                    pricePerNight={roomType.pricePerNight}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 };
 

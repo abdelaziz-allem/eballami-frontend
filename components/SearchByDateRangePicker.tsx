@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { DateRangePicker } from "@/components/DateRangePicker";
-import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
@@ -40,7 +39,7 @@ const SearchByDateRangePicker = () => {
         <DateRangePicker date={date} setDate={setDate} />
         <Button
           type="submit"
-          className="rounded bg-blue-500 px-4 text-white hover:bg-blue-600"
+          className="rounded bg-primary_color-500 px-4 text-white hover:bg-primary_color-600"
           onClick={onSubmit}
         >
           Search

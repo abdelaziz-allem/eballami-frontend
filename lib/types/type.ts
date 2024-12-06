@@ -170,6 +170,11 @@ export interface UpdateGuest {
 
 //PAYMENTS START//
 
+export interface MonthlyPayments {
+  month: string;
+  total: string;
+}
+
 export enum PaymentMethod {
   CASH = "Cash",
   BANK = "Bank",
@@ -185,16 +190,19 @@ export interface Payment {
   createdAt: string;
   updatedAt: string;
   booking: Booking;
+  user: User;
 }
 
 export interface CreatePayment {
   bookingId: number;
+  userId: number;
   amount: string;
   method: string;
 }
 
 export interface UpdatePayment {
   bookingId?: number;
+  userId: number;
   amount?: string;
   method?: string;
 }
@@ -311,3 +319,60 @@ export interface UpdateHousekeepingTask {
 }
 
 //HousekeepingTask End//
+
+//Expenses Start //
+
+export interface MonthlyExpenses {
+  month: string;
+  total: string;
+}
+
+export enum ExpenseCategory {
+  INVENTORY = "Inventory",
+  MAINTENANCE = "Maintenance",
+  UTILITIES = "Utilities",
+  SALARY = "Salary",
+  MARKETING = "Marketing",
+  MISCELLANEOUS = "Miscellaneous",
+  FURNITURE = "Furniture",
+  HOUSEKEEPING = "Housekeeping",
+  LEGAL = "Legal",
+  TRAINING = "Training",
+  SUBSCRIPTIONS = "Subscriptions",
+  SECURITY = "Security",
+  TAXES = "Taxes",
+  INSURANCE = "Insurance",
+  TECHNOLOGY = "Technology",
+  RENOVATION = "Renovation",
+  TRAVEL = "Travel",
+}
+
+export interface Expense {
+  id: number;
+  userId: number;
+  description: string;
+  amount: string;
+  category: ExpenseCategory;
+  method: PaymentMethod;
+  createdAt: string;
+  updatedAt: string;
+  user: User;
+}
+
+export interface CreateExpense {
+  userId: number;
+  description: string;
+  category: string;
+  amount: string;
+  method: string;
+}
+
+export interface UpdateExpense {
+  userId: number;
+  description?: string;
+  category?: string;
+  amount?: string;
+  method?: string;
+}
+
+//Expenses End//

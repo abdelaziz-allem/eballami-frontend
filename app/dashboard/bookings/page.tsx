@@ -1,17 +1,25 @@
 import SkeletonDemo from "@/components/SkeletonDemo";
 import { getRooms } from "@/lib/db/roomCrud";
-import { Booking, BookingStatus, Room } from "@/lib/types/type";
-import Bookings from "./Booking";
+import {
+  Booking,
+  BookingStatus,
+  Room,
+  userInSessionType,
+} from "@/lib/types/type";
+import Bookings from "./BookingTable";
 import { getBookings } from "@/lib/db/bookingCrud";
+import { getUserInSession } from "@/lib/userInSession";
 
 const BookingPage = async () => {
   let rooms: Room[] | null = null;
   let bookings: Booking[] | null = null;
+  let userInSession: userInSessionType | null = null;
   let error: string | null = null;
 
   try {
     rooms = await getRooms();
-    bookings = await getBookings(BookingStatus.CHECKED_IN);
+    bookings = await getBookings(BookingStatus.CHECKED_OUT, false);
+    userInSession = getUserInSession();
   } catch (err) {
     console.error("Error fetching roomTypes:", err);
     error = "Failed to load roomTypes. Please try again later.";
@@ -21,13 +29,17 @@ const BookingPage = async () => {
     return <div className="text-red-500">{error}</div>;
   }
 
-  if (rooms === null || bookings === null) {
+  if (rooms === null || bookings === null || userInSession === null) {
     return <SkeletonDemo />;
   }
 
   return (
     <div className="text-gray-900 dark:text-slate-50">
-      <Bookings rooms={rooms} bookings={bookings} />
+      <Bookings
+        rooms={rooms}
+        bookings={bookings}
+        userInSession={userInSession}
+      />
     </div>
   );
 };

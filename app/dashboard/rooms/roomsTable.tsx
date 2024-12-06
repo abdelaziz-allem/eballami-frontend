@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -15,7 +14,8 @@ import AddRoom from "./AddRoom";
 import EditRoom from "./EditRoom";
 import { Badge } from "@/components/ui/badge";
 import { Room, RoomType } from "@/lib/types/type";
-import { getRoomStatusColor } from "@/lib/utils";
+import { formatDate, getRoomStatusColor } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface RoomsProps {
   rooms: Room[];
@@ -34,63 +34,63 @@ const RoomsTable = ({ rooms, roomTypes }: RoomsProps) => {
   };
 
   return (
-    <div className="mx-6 rounded-lg border p-4 shadow-sm">
-      <div className="flex gap-3 mb-4">
-        <AddRoom roomTypes={roomTypes} />
-        <Input
-          className="w-auto"
-          placeholder="Search by room number..."
-          value={search}
-          onChange={handleInputChange}
-        />
-      </div>
+    <Card className="w-full border-none shadow-none">
+      <CardContent>
+        <div className="flex justify-between  mb-4">
+          <Input
+            className="w-auto"
+            placeholder="Search by room number..."
+            value={search}
+            onChange={handleInputChange}
+          />
+          <AddRoom roomTypes={roomTypes} />
+        </div>
 
-      <Table>
-        <TableCaption className="font-bold mb-2 text-center">
-          A list of rooms.
-        </TableCaption>
-
-        <TableHeader>
-          <TableRow>
-            <TableHead>Room Number</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {currentRooms.map((room) => (
-            <TableRow key={room.id}>
-              <TableCell>{room.number}</TableCell>
-              <TableCell>
-                <Badge className={`bg-pink-400 hover:bg-pink-500`}>
-                  {room.type.name}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Badge className={getRoomStatusColor(room.status)}>
-                  {room.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                {new Date(room.createdAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <EditRoom
-                  roomId={room.id}
-                  roomNumber={room.number}
-                  roomTypeId={room.type.id}
-                  roomStatus={room.status}
-                  roomTypes={roomTypes}
-                />
-              </TableCell>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Room Number</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+
+          <TableBody>
+            {currentRooms.map((room) => (
+              <TableRow key={room.id}>
+                <TableCell>{room.number}</TableCell>
+                <TableCell>
+                  <Badge
+                    className={`bg-primary_color-500 hover:bg-primary_color-600 text-white`}
+                  >
+                    {room.type.name}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge className={getRoomStatusColor(room.status)}>
+                    {room.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="font-light">
+                  {formatDate(room.createdAt)}
+                </TableCell>
+                <TableCell>
+                  <EditRoom
+                    roomId={room.id}
+                    roomNumber={room.number}
+                    roomTypeId={room.type.id}
+                    roomStatus={room.status}
+                    roomTypes={roomTypes}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 };
 

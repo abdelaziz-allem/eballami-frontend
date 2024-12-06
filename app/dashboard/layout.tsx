@@ -1,33 +1,33 @@
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
-import Container from "./Container";
-import Navbar from "./NavBar";
-import Sidebar from "./SideBar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ModeToggle } from "@/components/mode-toogle";
+import { AppSidebar } from "@/components/AppSideBar";
 import { getUserInSession } from "@/lib/userInSession";
-
-const poppins = Poppins({ subsets: ["latin"], weight: "300" });
-
-export const metadata: Metadata = {
-  title: "HMS",
-  description: "by nexlogik",
-  icons: "/next.svg",
-};
-
-const user = getUserInSession();
 
 export default function DashboardLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const user = getUserInSession();
+
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <div className={`flex min-h-screen flex-row ${poppins.className}`}>
-        <Sidebar user={user} />
-        <main className="flex-1 text-black dark:text-slate-50">
-          <Navbar />
-          <Container>{children}</Container>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <SidebarProvider>
+        <AppSidebar user={user} />
+        <main className="flex flex-1 flex-col gap-4 p-4 pt-0 w-full h-screen">
+          <div className="flex gap-3 items-center">
+            <SidebarTrigger />
+            <ModeToggle />
+          </div>
+          {children}
         </main>
-      </div>
+      </SidebarProvider>
     </ThemeProvider>
   );
 }
