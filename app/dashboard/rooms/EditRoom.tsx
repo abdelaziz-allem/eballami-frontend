@@ -179,53 +179,47 @@ const EditRoom = ({
               )}
             />
 
-            <FormField
-              control={control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <FormControl>
-                    <Select
-                      required
-                      {...field}
-                      onValueChange={(value: string) => field.onChange(value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Status</SelectLabel>
-                          {statusOptions.map((status) => (
-                            <SelectItem
-                              disabled={
-                                (roomStatus === RoomStatus.AVAILABLE &&
-                                  status === RoomStatus.OCCUPIED) ||
-                                (roomStatus === RoomStatus.OCCUPIED &&
-                                  status === RoomStatus.AVAILABLE) ||
-                                (roomStatus === RoomStatus.MAINTENANCE &&
-                                  status === RoomStatus.OCCUPIED)
-                              }
-                              key={status}
-                              value={status}
-                            >
-                              {status}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  {errors.status && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.status.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
+            {roomStatus !== RoomStatus.OCCUPIED && (
+              <FormField
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <Select
+                        required
+                        {...field}
+                        onValueChange={(value: string) => field.onChange(value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Status</SelectLabel>
+                            {statusOptions.map((status) => (
+                              <SelectItem
+                                disabled={status === RoomStatus.OCCUPIED}
+                                key={status}
+                                value={status}
+                              >
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    {errors.status && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.status.message}
+                      </p>
+                    )}
+                  </FormItem>
+                )}
+              />
+            )}
             <DialogFooter>
               <Button
                 type="submit"

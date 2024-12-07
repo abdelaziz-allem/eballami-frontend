@@ -64,5 +64,5 @@ export const calculateNights = (checkInDate: string): number => {
 
   const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
 
-  return diffInDays + 1;
+  return diffInDays;
 };
