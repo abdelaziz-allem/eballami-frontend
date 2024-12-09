@@ -30,7 +30,7 @@ const getDatesInRange = (startDate: Date, endDate: Date): string[] => {
   const currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
-    dates.push(currentDate.toISOString().split("T")[0]);
+    dates.push(currentDate.toISOString());
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
@@ -43,12 +43,10 @@ const calculateDailyCosts = (
   if (rates.length === 0) return [];
 
   const today = new Date();
-  const startDate = new Date(rates[0].startDate.split("T")[0]);
+  const startDate = new Date(rates[0].startDate);
   const endDate = new Date(
     rates.reduce((latest, rate) => {
-      const effectiveEndDate = rate.endDate
-        ? rate.endDate
-        : today.toISOString();
+      const effectiveEndDate = rate.endDate ? rate.endDate : today;
       return new Date(effectiveEndDate) > new Date(latest)
         ? effectiveEndDate
         : latest;
@@ -59,10 +57,8 @@ const calculateDailyCosts = (
 
   return allDates.map((date) => {
     const dailyCost = rates.reduce((total, rate) => {
-      const rateStart = new Date(rate.startDate.split("T")[0]);
-      const rateEnd = rate.endDate
-        ? new Date(rate.endDate.split("T")[0])
-        : today;
+      const rateStart = new Date(rate.startDate);
+      const rateEnd = rate.endDate ? new Date(rate.endDate) : today;
 
       if (rateStart <= new Date(date) && rateEnd >= new Date(date)) {
         total += parseFloat(rate.amount);

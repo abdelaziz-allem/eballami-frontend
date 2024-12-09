@@ -65,8 +65,8 @@ export enum RoomStatus {
 export interface Rate {
   id: number;
   bookingId: number;
-  startDate: string;
-  endDate?: string;
+  startDate: Date;
+  endDate?: Date;
   amount: string;
 }
 
