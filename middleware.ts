@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getUserInSession } from "./lib/db/userCrud";
 
 function parseJwt(token: string) {
   try {
@@ -17,7 +18,7 @@ function parseJwt(token: string) {
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
 
   if (!token) {
@@ -25,16 +26,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  const payload = parseJwt(token);
+  const userInSession = await getUserInSession();
 
-  if (!payload || payload.exp * 1000 < Date.now()) {
-    console.warn("Token expired or invalid");
-    const response = NextResponse.redirect(new URL("/auth/login", request.url));
-    response.cookies.delete("access_token");
-    return response;
-  }
-
-  const role = payload?.role;
+  const role = userInSession?.role;
   const url = request.nextUrl;
 
   if (url.pathname === "/dashboard") {
@@ -42,16 +36,19 @@ export function middleware(request: NextRequest) {
   }
 
   const routeAccess: Record<string, string[]> = {
-    Admin: ["/dashboard"],
-    Reception: [
-      "/dashboard/rooms",
-      "/dashboard/room-types",
-      "/dashboard/bookings",
-      "/dashboard/guests",
-      "/dashboard/payments",
+    Admin: [
+      "/dashboard/facilities",
+      "/dashboard/users",
+      "/dashboard/perks",
+      "/dashboard/facilityPerks",
+      "/dashboard/userFacilities",
     ],
-    HousekeepingAdmin: ["/dashboard/rooms", "/dashboard/housekeeping"],
-    Housekeeping: ["/dashboard/housekeeping"],
+    Owner: [
+      "/dashboard/overview",
+      "/dashboard/users",
+      "/dashboard/bookings",
+      "/dashboard/manage",
+    ],
   };
 
   const hasAccess = (role: string | undefined, pathname: string): boolean => {

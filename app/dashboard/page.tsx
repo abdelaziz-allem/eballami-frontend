@@ -1,15 +1,16 @@
-import { getUserInSession } from "@/lib/userInSession";
+import { getUserInSession } from "@/lib/db/userCrud";
+import { get } from "http";
 import Image from "next/image";
 import React from "react";
 
-const DashboardHome = () => {
-  const user = getUserInSession();
+const DashboardHome = async () => {
+  const userInSession = await getUserInSession();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen  p-4">
       <div className="  p-8 w-full max-w-3xl text-center">
         <h1 className="text-4xl font-extrabold  mb-4">
-          Welcome, {user?.name}!
+          Welcome, {userInSession?.name}!
         </h1>
         <p className=" text-lg mb-6">
           Together, we make every guest experience exceptional. Let&apos;s make

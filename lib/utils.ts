@@ -1,68 +1,67 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ROLE, RoomStatus, TaskStatus } from "./types/type";
+import { BookingStatus, ROLE } from "./types/type";
+import timeList from "@/app/dashboard/manage/timeList";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: string): string {
+export function formatDate(dateTime: string): string {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "short",
     day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   };
-  return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
+  return new Intl.DateTimeFormat("en-US", options).format(new Date(dateTime));
 }
-
-export const getRoomStatusColor = (status: RoomStatus) => {
-  switch (status) {
-    case RoomStatus.OCCUPIED:
-      return `bg-emerald-500  hover:bg-emerald-600 text-white`;
-    case RoomStatus.AVAILABLE:
-      return `bg-primary_color-500  hover:bg-primary_color-600 text-white`;
-    case RoomStatus.MAINTENANCE:
-      return `bg-red-500 hover:bg-red-600 text-white`;
-    default:
-      return `bg-gray-500 hover:bg-gray-600 text-white`;
-  }
-};
-
-export const getRoomTaskStatusColor = (status: string, part: string) => {
-  switch (status) {
-    case TaskStatus.DONE:
-      return `${part}-emerald-500 text-white`;
-    case TaskStatus.PENDING:
-      return `${part}-sky-500 text-white`;
-    case TaskStatus.CANCELLED:
-      return `${part}-red-500 text-white`;
-    default:
-      return `${part}-gray-500 text-white`;
-  }
-};
 
 export const getRoleColor = (status: ROLE) => {
   switch (status) {
     case ROLE.ADMIN:
-      return "bg-primary_color-500 hover:bg-primary_color-600 text-white";
-    case ROLE.RECEPTION:
-      return "bg-sky-500 hover:bg-sky-600 text-white";
-    case ROLE.HOUSEKEEPING:
-      return " bg-emerald-500 hover:bg-emerald-600  text-white";
-    case ROLE.HOUSEKEEPING_ADMIN:
-      return "bg-pink-500 hover:bg-pink-600 text-white";
+      return "bg-primary_color-500 hover:bg-primary_color-600 ";
+    case ROLE.OWNER:
+      return "bg-blue-500 hover:bg-blue-600 ";
+    case ROLE.USER:
+      return "bg-sky-500 hover:bg-sky-600 ";
     default:
-      return "bg-gray-500 hover:bg-gray-600 text-white";
+      return "bg-gray-500 hover:bg-gray-600 ";
   }
 };
 
-export const calculateNights = (checkInDate: string): number => {
-  const checkIn = new Date(checkInDate);
-  const checkOut = new Date();
+export const getDayStatus = (isActive: boolean) => {
+  switch (isActive) {
+    case true:
+      return "bg-primary_color-500 hover:bg-primary_color-600 ";
+    case false:
+      return "bg-red-500 hover:bg-red-600";
+    default:
+      return "bg-gray-500 hover:bg-gray-600 ";
+  }
+};
 
-  const diffInMilliseconds = checkOut.getTime() - checkIn.getTime();
+export const getTimeInBetween = (startTime: number, endTime: number) => {
+  const period = [];
+  for (let i = startTime; i <= endTime; i++) {
+    const nextHour = (i + 1) % 24;
+    period.push(`${timeList[i].label}-${timeList[nextHour].label}`);
+  }
+  return period;
+};
 
-  const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+export const getStatusColor = (status: BookingStatus) => {
+  switch (status) {
+    case BookingStatus.BOOKED:
+      return "bg-emerald-500 hover:bg-emerald-600";
+    case BookingStatus.RESCHEDULED:
+      return "bg-secondary_color-500 hover:bg-secondary_color-600";
 
-  return diffInDays;
+    case BookingStatus.CANCELLED:
+      return "bg-red-500 hover:bg-red-600";
+    default:
+      return "bg-gray-500 hover:bg-gray-600";
+  }
 };

@@ -10,7 +10,7 @@ export default {
   safelist: [
     {
       pattern:
-        /(bg|text|border)-(green|blue|red|gray|sky|emerald|purple|pink|violet)-(100|200|300|400|500|600)/,
+        /(bg|text|border)-(blue|primary_color|secondary_color|red|gray|sky|emerald)-(100|200|300|400|500|600|700|800|900)/,
     },
   ],
   theme: {
@@ -75,7 +75,19 @@ export default {
           600: "#6900CC",
           700: "#520099",
           800: "#3B0066",
-          900: "#250033", // darkest
+          900: "#250033",
+        },
+
+        secondary_color: {
+          100: "#FFF4E6",
+          200: "#FFE4B3",
+          300: "#FFD480",
+          400: "#FFC34D",
+          500: "#FFB31A",
+          600: "#CC8F15",
+          700: "#996B11",
+          800: "#66470C",
+          900: "#332306",
         },
       },
       borderRadius: {

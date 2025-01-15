@@ -9,8 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -21,6 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,29 +33,31 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { createUser } from "@/lib/db/userCrud";
+import { updatePerk } from "@/lib/db/perkCrud";
 import { toast } from "@/hooks/use-toast";
-import { ROLE } from "@/lib/types/type";
-import { Plus } from "lucide-react";
+import { FacilityType, Perk } from "@/lib/types/type";
+import { Pencil } from "lucide-react";
 
-const roleOptions = Object.values(ROLE);
+const facilityTypeOptions = Object.values(FacilityType);
 
 const schema = z.object({
   name: z.string().min(1, "User number is required"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-  role: z.enum(roleOptions as [ROLE, ...ROLE[]]),
+  type: z.enum(facilityTypeOptions as [FacilityType, ...FacilityType[]]),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const AddUser = () => {
+const EditPerk = ({ perk }: { perk: Perk }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: perk.name,
+      type: perk.type,
+    },
   });
 
   const {
@@ -68,15 +70,13 @@ const AddUser = () => {
     try {
       setLoading(true);
 
-      await createUser({
+      await updatePerk(perk.id, {
         name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
+        type: formData.type,
       });
 
       toast({
-        title: "User created successfully",
+        title: "Perk updated successfully",
         className: "bg-primary_color-500 ",
       });
 
@@ -95,12 +95,12 @@ const AddUser = () => {
           variant="default"
           className="bg-primary_color-500 hover:bg-primary_color-600 "
         >
-          <Plus />
+          <Pencil />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
+          <DialogTitle>Add Perk</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>
@@ -111,9 +111,9 @@ const AddUser = () => {
               defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Name</FormLabel>
+                  <FormLabel>Perk</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter user name" {...field} />
+                    <Input placeholder="Enter perk name" {...field} />
                   </FormControl>
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-500">
@@ -126,48 +126,10 @@ const AddUser = () => {
 
             <FormField
               control={control}
-              name="email"
-              defaultValue={""}
+              name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="Enter email" {...field} />
-                  </FormControl>
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="password"
-              defaultValue={""}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter password" {...field} />
-                  </FormControl>
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>User Type</FormLabel>
+                  <FormLabel>Perk Type</FormLabel>
                   <FormControl>
                     <Select
                       required
@@ -175,23 +137,23 @@ const AddUser = () => {
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select user type" />
+                        <SelectValue placeholder="Select perk type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>User Type</SelectLabel>
-                          {roleOptions.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role}
+                          <SelectLabel>Perk Type</SelectLabel>
+                          {facilityTypeOptions.map((facilityType) => (
+                            <SelectItem key={facilityType} value={facilityType}>
+                              {facilityType}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {errors.role && (
+                  {errors.type && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.role.message}
+                      {errors.type.message}
                     </p>
                   )}
                 </FormItem>
@@ -214,4 +176,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default EditPerk;

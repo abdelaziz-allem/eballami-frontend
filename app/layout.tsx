@@ -5,14 +5,19 @@ import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700"],
+  weight: ["100", "300", "400", "500", "700"],
   style: ["normal", "italic"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "hms app",
-  description: "hms app",
+  title: "eBalami",
+  description: "eBalami",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -26,7 +31,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased ${poppins.className}`}>
         {children}
-
         <Toaster />
       </body>
     </html>

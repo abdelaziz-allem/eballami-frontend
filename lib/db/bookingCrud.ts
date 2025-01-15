@@ -8,34 +8,34 @@ import {
   BookingStatus,
 } from "../types/type";
 
-export async function getBookings(
-  bookingStatus?: BookingStatus,
-  isFalse?: false
-): Promise<Booking[]> {
+export async function getBookings(facilityId: number): Promise<Booking[]> {
   const headers = getAuthHeaders();
   try {
-    if (bookingStatus && isFalse === undefined) {
-      const response = await axiosInstance.get(
-        `/booking?status=${bookingStatus}`,
-        { headers }
-      );
-      return response.data;
-    } else if (bookingStatus && isFalse === false) {
-      const response = await axiosInstance.get(
-        `/booking?status=CheckedIn&isfalse=false`,
-        {
-          headers,
-        }
-      );
-      return response.data;
-    }
-    const response = await axiosInstance.get("/booking", { headers });
+    const response = await axiosInstance.get(
+      `/booking/all?facilityId=${facilityId}`,
+      {
+        headers,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching Bookings:", error);
     throw new Error("Failed to fetch Bookings");
   }
 }
+
+export const getBookingsByDate = async (date: string): Promise<Booking[]> => {
+  const headers = getAuthHeaders();
+  try {
+    const response = await axiosInstance.get(`/booking/all/${date}`, {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Bookings:", error);
+    throw new Error("Failed to fetch Bookings");
+  }
+};
 
 export const getBooking = async (id: number): Promise<Booking> => {
   const headers = getAuthHeaders();

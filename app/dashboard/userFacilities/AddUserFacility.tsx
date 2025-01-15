@@ -35,21 +35,23 @@ import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { createUser } from "@/lib/db/userCrud";
 import { toast } from "@/hooks/use-toast";
-import { ROLE } from "@/lib/types/type";
+import { Facility, User } from "@/lib/types/type";
+import { createUserFacility } from "@/lib/db/userfacilityCrud";
 import { Plus } from "lucide-react";
 
-const roleOptions = Object.values(ROLE);
+interface AddUserFacilityProps {
+  users: User[];
+  facilities: Facility[];
+}
 
 const schema = z.object({
-  name: z.string().min(1, "User number is required"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-  role: z.enum(roleOptions as [ROLE, ...ROLE[]]),
+  userId: z.string().min(1, "User  is required"),
+  facilityId: z.string().min(1, "Facility is required"),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const AddUser = () => {
+const AddUserFacility = ({ users, facilities }: AddUserFacilityProps) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
@@ -68,11 +70,9 @@ const AddUser = () => {
     try {
       setLoading(true);
 
-      await createUser({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
+      await createUserFacility({
+        userId: +formData.userId,
+        facilityId: +formData.facilityId,
       });
 
       toast({
@@ -83,6 +83,8 @@ const AddUser = () => {
       setDialogOpen(false);
       router.refresh();
     } catch (error) {
+
+      
       console.error("An error occurred:", error);
     }
     setLoading(false);
@@ -100,74 +102,17 @@ const AddUser = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
+          <DialogTitle>Link User to Facility</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
             <FormField
               control={control}
-              name="name"
-              defaultValue={""}
+              name="userId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter user name" {...field} />
-                  </FormControl>
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.name.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="email"
-              defaultValue={""}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="Enter email" {...field} />
-                  </FormControl>
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="password"
-              defaultValue={""}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter password" {...field} />
-                  </FormControl>
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>User Type</FormLabel>
+                  <FormLabel>Users</FormLabel>
                   <FormControl>
                     <Select
                       required
@@ -175,23 +120,67 @@ const AddUser = () => {
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select user type" />
+                        <SelectValue placeholder="Select user" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>User Type</SelectLabel>
-                          {roleOptions.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role}
+                          <SelectLabel>Users</SelectLabel>
+                          {users
+                            .filter((user) => user.role === "Owner")
+                            .map((user) => (
+                              <SelectItem
+                                key={user.id}
+                                value={user.id.toString()}
+                              >
+                                {user.name}
+                              </SelectItem>
+                            ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  {errors.userId && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.userId.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="facilityId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Facilities</FormLabel>
+                  <FormControl>
+                    <Select
+                      required
+                      {...field}
+                      onValueChange={(value: string) => field.onChange(value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select facility" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Facilities</SelectLabel>
+                          {facilities.map((facility) => (
+                            <SelectItem
+                              key={facility.id}
+                              value={facility.id.toString()}
+                            >
+                              {facility.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {errors.role && (
+                  {errors.facilityId && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.role.message}
+                      {errors.facilityId.message}
                     </p>
                   )}
                 </FormItem>
@@ -214,4 +203,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default AddUserFacility;

@@ -119,9 +119,7 @@ export function NavUser({ user }: NavUserProps) {
               />
               <div className="ml-3 flex-1 text-left">
                 <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {user.mobileNumber}
-                </p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
               <ChevronsUpDown className="ml-auto h-4 w-4 text-muted-foreground" />
             </SidebarMenuButton>

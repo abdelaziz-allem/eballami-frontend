@@ -10,22 +10,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import AddUser from "./AddUser";
-import EditUser from "./EditUser";
-import { Badge } from "@/components/ui/badge";
-import { User } from "@/lib/types/type";
-import { getRoleColor } from "@/lib/utils";
+import AddUserFacility from "./AddUserFacility";
+import EditUserFacility from "./EditUserFacility";
+import { Facility, User, UserFacility } from "@/lib/types/type";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface UsersProps {
+interface UserFacilitiesProps {
+  userFacilities: UserFacility[];
   users: User[];
+  facilities: Facility[];
 }
 
-const UsersTable = ({ users }: UsersProps) => {
+const UserFacilities = ({
+  userFacilities,
+  users,
+  facilities,
+}: UserFacilitiesProps) => {
   const [search, setSearch] = useState("");
 
-  const currentUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
+  const currentUserFacilities = userFacilities.filter((userFacility) =>
+    userFacility.user.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,27 +46,29 @@ const UsersTable = ({ users }: UsersProps) => {
             value={search}
             onChange={handleInputChange}
           />
-          <AddUser />
+          <AddUserFacility users={users} facilities={facilities} />
         </div>
 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User Name</TableHead>
-              <TableHead>Role</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Facility</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {currentUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
+            {currentUserFacilities.map((userFacility) => (
+              <TableRow key={userFacility.id}>
+                <TableCell>{userFacility.user.name}</TableCell>
+                <TableCell>{userFacility.facility.name}</TableCell>
                 <TableCell>
-                  <Badge className={getRoleColor(user.role)}>{user.role}</Badge>
-                </TableCell>
-                <TableCell>
-                  <EditUser user={user} />
+                  <EditUserFacility
+                    users={users}
+                    facilities={facilities}
+                    userFacility={userFacility}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -73,4 +79,4 @@ const UsersTable = ({ users }: UsersProps) => {
   );
 };
 
-export default UsersTable;
+export default UserFacilities;

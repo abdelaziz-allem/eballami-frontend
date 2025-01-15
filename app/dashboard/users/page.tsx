@@ -5,6 +5,7 @@ import { User } from "@/lib/types/type";
 
 const UsersPage = async () => {
   let users: User[] | null = null;
+
   let error: string | null = null;
 
   try {

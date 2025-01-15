@@ -31,7 +31,7 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
-import { Edit2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { updateUser } from "@/lib/db/userCrud";
 import { ROLE, User } from "@/lib/types/type";
@@ -40,7 +40,6 @@ const roleOptions = Object.values(ROLE);
 
 const schema = z.object({
   name: z.string().min(1, "User number is required"),
-  mobileNumber: z.string().min(1, "Mobile number is required"),
   role: z.enum(roleOptions as [ROLE, ...ROLE[]]),
 });
 
@@ -68,7 +67,6 @@ const EditUser = ({ user }: { user: User }) => {
 
       await updateUser(user.id, {
         name: formData.name,
-        mobileNumber: formData.mobileNumber,
         role: formData.role,
       });
 
@@ -76,6 +74,7 @@ const EditUser = ({ user }: { user: User }) => {
         title: "User updated successfully",
         className: "bg-primary_color-500 text-white",
       });
+      setDialogOpen(false);
       router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
@@ -87,10 +86,10 @@ const EditUser = ({ user }: { user: User }) => {
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="rounded-full p-2 text-primary_color-500 transition-colors duration-300 ease-in-out hover:bg-primary_color-100 hover:text-primary_color-500"
-          variant="ghost"
+          variant="default"
+          className="bg-primary_color-500 hover:bg-primary_color-600 "
         >
-          <Edit2 className="transform transition-transform hover:scale-110" />
+          <Pencil />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -113,25 +112,6 @@ const EditUser = ({ user }: { user: User }) => {
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.name.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="mobileNumber"
-              defaultValue={""}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile Number</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter user number" {...field} />
-                  </FormControl>
-                  {errors.mobileNumber && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.mobileNumber.message}
                     </p>
                   )}
                 </FormItem>

@@ -1,10 +1,9 @@
 import SkeletonDemo from "@/components/SkeletonDemo";
 import { UserFacility } from "@/lib/types/type";
-import Bookings from "./BookingTable";
-import { getBookings } from "@/lib/db/bookingCrud";
+import Facilities from "./Facilities";
 import { getUserFacilities } from "@/lib/db/userfacilityCrud";
 
-const BookingPage = async () => {
+const FacilitiesPage = async () => {
   let userFacilities: UserFacility[] | null = null;
   let error: string | null = null;
 
@@ -24,9 +23,9 @@ const BookingPage = async () => {
   }
   return (
     <div className="text-gray-900 dark:text-slate-50">
-      <Bookings userFacilities={userFacilities} />
+      <Facilities userFacilities={userFacilities} />
     </div>
   );
 };
 
-export default BookingPage;
+export default FacilitiesPage;

@@ -9,8 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -20,6 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,29 +33,39 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading";
-import { createUser } from "@/lib/db/userCrud";
 import { toast } from "@/hooks/use-toast";
-import { ROLE } from "@/lib/types/type";
-import { Plus } from "lucide-react";
+import { updateFacility } from "@/lib/db/facilityCrud";
+import { Pencil } from "lucide-react";
+import { Facility, FacilityType } from "@/lib/types/type";
 
-const roleOptions = Object.values(ROLE);
+const facilityTypeOptions = Object.values(FacilityType);
 
 const schema = z.object({
   name: z.string().min(1, "User number is required"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-  role: z.enum(roleOptions as [ROLE, ...ROLE[]]),
+  description: z.string().min(1, "Description is required"),
+  mobileNumber: z.string().min(1, "Mobile number is required"),
+  address: z.string().min(1, "Address is required"),
+  map: z.string().min(1, "Map is required"),
+  type: z.enum(facilityTypeOptions as [FacilityType, ...FacilityType[]]),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const AddUser = () => {
+const EditFacility = ({ facility }: { facility: Facility }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: facility.name,
+      mobileNumber: facility.mobileNumber,
+      description: facility.description,
+      address: facility.address,
+      map: facility.map,
+      type: facility.type,
+    },
   });
 
   const {
@@ -68,19 +78,20 @@ const AddUser = () => {
     try {
       setLoading(true);
 
-      await createUser({
+      await updateFacility(facility.id, {
         name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-      });
-
-      toast({
-        title: "User created successfully",
-        className: "bg-primary_color-500 ",
+        description: formData.description,
+        address: formData.address,
+        map: formData.map,
+        mobileNumber: formData.mobileNumber,
       });
 
       setDialogOpen(false);
+
+      toast({
+        title: "Facility updated successfully",
+        className: "bg-primary_color-500 ",
+      });
       router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
@@ -95,12 +106,12 @@ const AddUser = () => {
           variant="default"
           className="bg-primary_color-500 hover:bg-primary_color-600 "
         >
-          <Plus />
+          <Pencil />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
+          <DialogTitle>Add facility</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>
@@ -126,17 +137,17 @@ const AddUser = () => {
 
             <FormField
               control={control}
-              name="email"
+              name="description"
               defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Enter email" {...field} />
+                    <Input placeholder="Enter description" {...field} />
                   </FormControl>
-                  {errors.email && (
+                  {errors.description && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.email.message}
+                      {errors.description.message}
                     </p>
                   )}
                 </FormItem>
@@ -145,17 +156,17 @@ const AddUser = () => {
 
             <FormField
               control={control}
-              name="password"
+              name="mobileNumber"
               defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Mobile number</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter password" {...field} />
+                    <Input placeholder="Enter mobileNumber" {...field} />
                   </FormControl>
-                  {errors.password && (
+                  {errors.mobileNumber && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.password.message}
+                      {errors.mobileNumber.message}
                     </p>
                   )}
                 </FormItem>
@@ -164,10 +175,48 @@ const AddUser = () => {
 
             <FormField
               control={control}
-              name="role"
+              name="address"
+              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Type</FormLabel>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter address" {...field} />
+                  </FormControl>
+                  {errors.address && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.address.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="map"
+              defaultValue={""}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Map</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter map" {...field} />
+                  </FormControl>
+                  {errors.map && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.map.message}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Facility Type</FormLabel>
                   <FormControl>
                     <Select
                       required
@@ -175,23 +224,23 @@ const AddUser = () => {
                       onValueChange={(value: string) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select user type" />
+                        <SelectValue placeholder="Select facility type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>User Type</SelectLabel>
-                          {roleOptions.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role}
+                          <SelectLabel>Facility Type</SelectLabel>
+                          {facilityTypeOptions.map((facilityType) => (
+                            <SelectItem key={facilityType} value={facilityType}>
+                              {facilityType}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  {errors.role && (
+                  {errors.type && (
                     <p className="mt-1 text-sm text-red-500">
-                      {errors.role.message}
+                      {errors.type.message}
                     </p>
                   )}
                 </FormItem>
@@ -214,4 +263,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default EditFacility;

@@ -10,21 +10,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import AddUser from "./AddUser";
-import EditUser from "./EditUser";
-import { Badge } from "@/components/ui/badge";
-import { User } from "@/lib/types/type";
-import { getRoleColor } from "@/lib/utils";
+import AddPerk from "./AddPerk";
+import EditPerk from "./EditPerk";
+import { Perk } from "@/lib/types/type";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface UsersProps {
-  users: User[];
+interface PerksProps {
+  perks: Perk[];
 }
 
-const UsersTable = ({ users }: UsersProps) => {
+const Perks = ({ perks }: PerksProps) => {
   const [search, setSearch] = useState("");
 
-  const currentUsers = users.filter((user) =>
+  const currentPerks = perks.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -42,27 +40,25 @@ const UsersTable = ({ users }: UsersProps) => {
             value={search}
             onChange={handleInputChange}
           />
-          <AddUser />
+          <AddPerk />
         </div>
 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User Name</TableHead>
-              <TableHead>Role</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {currentUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
+            {currentPerks.map((perk) => (
+              <TableRow key={perk.id}>
+                <TableCell>{perk.name}</TableCell>
+                <TableCell>{perk.type}</TableCell>
                 <TableCell>
-                  <Badge className={getRoleColor(user.role)}>{user.role}</Badge>
-                </TableCell>
-                <TableCell>
-                  <EditUser user={user} />
+                  <EditPerk perk={perk} />
                 </TableCell>
               </TableRow>
             ))}
@@ -73,4 +69,4 @@ const UsersTable = ({ users }: UsersProps) => {
   );
 };
 
-export default UsersTable;
+export default Perks;

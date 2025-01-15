@@ -21,13 +21,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { EyeIcon, EyeOffIcon, PhoneIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Mail, PhoneIcon } from "lucide-react";
 import { getAccessToken } from "@/lib/db/auth";
 import nookies from "nookies";
 import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
-  mobileNumber: z.string().min(1, "Phone number is required"),
+  email: z.string().min(1, "Phone number is required"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -55,7 +55,7 @@ function LoginPage() {
 
     try {
       const user = await getAccessToken({
-        mobileNumber: data.mobileNumber,
+        email: data.email,
         password: data.password,
       });
       nookies.set(undefined, "access_token", user.access_token, { path: "/" });
@@ -71,44 +71,47 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-violet-500 p-6">
+      <Card className="w-full max-w-md rounded-xl shadow-xl bg-white dark:bg-gray-800">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-3xl font-bold text-center text-gray-800 dark:text-white">
             Login
           </CardTitle>
-          <CardDescription className="text-center">
-            Enter your phone number and password to access your account
+          <CardDescription className="text-center text-gray-600 dark:text-gray-300">
+            Enter your email and password to access your account or continue
+            with Google
           </CardDescription>
         </CardHeader>
         <Form {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <CardContent className="space-y-4">
-              {/* Phone Number Field */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <CardContent className="space-y-6">
+              {/* email Field */}
               <FormField
                 control={control}
-                name="mobileNumber"
+                name="email"
                 defaultValue=""
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-white">
+                      email
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <PhoneIcon
+                        <Mail
                           className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                          size={18}
+                          size={20}
                         />
                         <Input
-                          type="tel"
-                          placeholder="Enter your phone number"
-                          className="pl-10"
+                          type="email"
+                          placeholder="Enter your email"
+                          className="pl-10 focus:ring-2 focus:ring-violet-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                           {...field}
                         />
                       </div>
                     </FormControl>
-                    {errors.mobileNumber && (
+                    {errors.email && (
                       <p className="mt-1 text-sm text-red-500">
-                        {errors.mobileNumber.message}
+                        {errors.email.message}
                       </p>
                     )}
                   </FormItem>
@@ -121,12 +124,15 @@ function LoginPage() {
                 defaultValue=""
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-white">
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
+                          className="focus:ring-2 focus:ring-violet-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                           {...field}
                         />
                         <button
@@ -136,9 +142,9 @@ function LoginPage() {
                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         >
                           {showPassword ? (
-                            <EyeOffIcon size={18} />
+                            <EyeOffIcon size={20} />
                           ) : (
-                            <EyeIcon size={18} />
+                            <EyeIcon size={20} />
                           )}
                         </button>
                       </div>
@@ -155,12 +161,26 @@ function LoginPage() {
               {error && <p className="text-sm text-red-500">{error}</p>}
             </CardContent>
             <CardFooter>
-              <Button className="w-full" type="submit" disabled={loading}>
+              <Button
+                className="w-full bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-lg py-3"
+                type="submit"
+                disabled={loading}
+              >
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
             </CardFooter>
           </form>
         </Form>
+        <Button
+          className="w-full mt-6 bg-white text-violet-500 hover:bg-gray-100 font-semibold py-3 rounded-lg"
+          onClick={() =>
+            router.push(
+              `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/google/callback`
+            )
+          }
+        >
+          Continue with Google
+        </Button>
       </Card>
     </div>
   );

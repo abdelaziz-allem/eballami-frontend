@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -14,22 +12,38 @@ import {
 
 import Image from "next/image";
 import sidebarItems from "./SideBarItems";
+import { useEffect, useState } from "react";
+import { User } from "@/lib/types/type";
+import { getUserInSession } from "@/lib/db/userCrud";
 
-export function AppSidebar({ ...props }: any) {
-  const { user } = props;
+export function AppSidebar() {
+  const [userInSession, setUserInSession] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUserInSession = async () => {
+      const user = await getUserInSession();
+      setUserInSession(user);
+    };
+
+    fetchUserInSession();
+  }, []);
+
+  if (!userInSession) {
+    return null;
+  }
 
   return (
-    <Sidebar collapsible="icon" {...props} className="bg-slate-100 ">
+    <Sidebar collapsible="icon" className="bg-slate-100 ">
       <SidebarHeader>
-        <div className="mb-6 flex items-center justify-center gap-2 p-4">
-          <Image src="/logo.png" height={150} width={150} alt="HMS Logo" />
+        <div className="flex items-center">
+          <Image src="/logo.png" height={80} width={80} alt="HMS Logo" />
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={sidebarItems} user={user} />
+        <NavMain items={sidebarItems} user={userInSession} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={props.user} />
+        <NavUser user={userInSession} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

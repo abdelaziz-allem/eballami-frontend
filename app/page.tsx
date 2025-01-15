@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-500 to-violet-700 flex flex-col items-center justify-center text-white">
-      <h1 className="text-6xl font-bold mb-4">Welcome to Hoyo</h1>
-      <p className="text-xl mb-8">Elevate Your Hotel Management Experience</p>
+      <h1 className="text-6xl font-bold mb-4">The booking app</h1>
 
       <Link href="/auth/login">
         <Button
