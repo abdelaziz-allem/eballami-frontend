@@ -40,17 +40,16 @@ import { Plus } from "lucide-react";
 
 interface AddFacilityPerkProps {
   perks: Perk[];
-  facilities: Facility[];
+  facilityId: number;
 }
 
 const schema = z.object({
   perkId: z.string().min(1, "perk  is required"),
-  facilityId: z.string().min(1, "Facility is required"),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const AddFacilityPerk = ({ perks, facilities }: AddFacilityPerkProps) => {
+const AddFacilityPerk = ({ perks, facilityId }: AddFacilityPerkProps) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
@@ -71,17 +70,22 @@ const AddFacilityPerk = ({ perks, facilities }: AddFacilityPerkProps) => {
 
       await createFacilityPerk({
         perkId: +formData.perkId,
-        facilityId: +formData.facilityId,
+        facilityId: +facilityId,
       });
 
       toast({
-        title: "Linked successfully",
+        title: "Added perk successfully",
         className: "bg-primary_color-500 ",
       });
 
       setDialogOpen(false);
       router.refresh();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: error.message,
+      });
+
       console.error("An error occurred:", error);
     }
     setLoading(false);
@@ -94,7 +98,7 @@ const AddFacilityPerk = ({ perks, facilities }: AddFacilityPerkProps) => {
           variant="default"
           className="bg-primary_color-500 hover:bg-primary_color-600 "
         >
-          <Plus />
+          Add perk
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -137,45 +141,6 @@ const AddFacilityPerk = ({ perks, facilities }: AddFacilityPerkProps) => {
                   {errors.perkId && (
                     <p className="mt-1 text-sm text-red-500">
                       {errors.perkId.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
-              name="facilityId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Facilities</FormLabel>
-                  <FormControl>
-                    <Select
-                      required
-                      {...field}
-                      onValueChange={(value: string) => field.onChange(value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select facility" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Facilities</SelectLabel>
-                          {facilities.map((facility) => (
-                            <SelectItem
-                              key={facility.id}
-                              value={facility.id.toString()}
-                            >
-                              {facility.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  {errors.facilityId && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.facilityId.message}
                     </p>
                   )}
                 </FormItem>

@@ -36,13 +36,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const routeAccess: Record<string, string[]> = {
-    Admin: [
-      "/dashboard/facilities",
-      "/dashboard/users",
-      "/dashboard/perks",
-      "/dashboard/facilityPerks",
-      "/dashboard/userFacilities",
-    ],
+    Admin: ["/dashboard/facilities", "/dashboard/users", "/dashboard/perks"],
     Owner: [
       "/dashboard/overview",
       "/dashboard/users",

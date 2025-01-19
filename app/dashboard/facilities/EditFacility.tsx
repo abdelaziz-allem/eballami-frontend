@@ -84,6 +84,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
         address: formData.address,
         map: formData.map,
         mobileNumber: formData.mobileNumber,
+        type: formData.type,
       });
 
       setDialogOpen(false);
@@ -106,7 +107,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
           variant="default"
           className="bg-primary_color-500 hover:bg-primary_color-600 "
         >
-          <Pencil />
+          Edit facility
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

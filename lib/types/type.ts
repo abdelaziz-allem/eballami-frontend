@@ -100,6 +100,9 @@ export interface Facility {
   closeHour: string;
   price: number;
   gallery: Gallery[];
+  perks: FacilityPerk[];
+  users: UserFacility[];
+  rates: any[];
   createdAt: Date;
 }
 

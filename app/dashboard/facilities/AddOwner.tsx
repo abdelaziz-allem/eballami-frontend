@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -34,38 +33,29 @@ import {
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { toast } from "@/hooks/use-toast";
-import { Facility, User, UserFacility } from "@/lib/types/type";
-import { updateUserFacility } from "@/lib/db/userfacilityCrud";
-import { Pencil } from "lucide-react";
-
-interface EditUserFacilityProps {
-  users: User[];
-  facilities: Facility[];
-  userFacility: UserFacility;
-}
+import { User } from "@/lib/types/type";
+import { createUserFacility } from "@/lib/db/userfacilityCrud";
+import { Plus } from "lucide-react";
 
 const schema = z.object({
   userId: z.string().min(1, "User  is required"),
-  facilityId: z.string().min(1, "Facility is required"),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const EditUserFacility = ({
+const AddOwner = ({
   users,
-  facilities,
-  userFacility,
-}: EditUserFacilityProps) => {
+  facilityId,
+}: {
+  users: User[];
+  facilityId: number;
+}) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      userId: userFacility.userId.toString(),
-      facilityId: userFacility.facilityId.toString(),
-    },
   });
 
   const {
@@ -78,9 +68,9 @@ const EditUserFacility = ({
     try {
       setLoading(true);
 
-      await updateUserFacility(userFacility.id, {
+      await createUserFacility({
         userId: +formData.userId,
-        facilityId: +formData.facilityId,
+        facilityId: facilityId,
       });
 
       toast({
@@ -91,7 +81,10 @@ const EditUserFacility = ({
       setDialogOpen(false);
       router.refresh();
     } catch (error) {
-      console.error("An error occurred:", error);
+      toast({
+        variant: "destructive",
+        title: error.message,
+      });
     }
     setLoading(false);
   }
@@ -103,7 +96,7 @@ const EditUserFacility = ({
           variant="default"
           className="bg-primary_color-500 hover:bg-primary_color-600 "
         >
-          <Pencil />
+          Add Owner
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -154,45 +147,6 @@ const EditUserFacility = ({
               )}
             />
 
-            <FormField
-              control={control}
-              name="facilityId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Facilities</FormLabel>
-                  <FormControl>
-                    <Select
-                      required
-                      {...field}
-                      onValueChange={(value: string) => field.onChange(value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select facility" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Facilities</SelectLabel>
-                          {facilities.map((facility) => (
-                            <SelectItem
-                              key={facility.id}
-                              value={facility.id.toString()}
-                            >
-                              {facility.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  {errors.facilityId && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.facilityId.message}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
             <DialogFooter>
               <Button
                 type="submit"
@@ -209,4 +163,4 @@ const EditUserFacility = ({
   );
 };
 
-export default EditUserFacility;
+export default AddOwner;

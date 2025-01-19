@@ -40,18 +40,6 @@ const sidebarItems = [
     text: "Perks",
     role: ["Admin"],
   },
-  {
-    href: "/dashboard/userFacilities",
-    icon: UserRoundCog,
-    text: "User Facilities",
-    role: ["Admin"],
-  },
-  {
-    href: "/dashboard/facilityPerks",
-    icon: Book,
-    text: "Facility Perks",
-    role: ["Admin"],
-  },
 ];
 
 export default sidebarItems;
