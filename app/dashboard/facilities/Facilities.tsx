@@ -76,8 +76,8 @@ const Facilities = ({ facilities, perks, users }: RoomsProps) => {
                 <TableCell>{facility.map}</TableCell>
                 <TableCell>{facility.type}</TableCell>
                 <TableCell>
-                  {facility.perks.map((perk) => (
-                    <div className="flex items-center ">
+                  {facility.perks.map((perk, index) => (
+                    <div className="flex items-center" key={index}>
                       <div className="flex items-center gap-2">
                         <Badge className="bg-primary_color-500 hover:bg-primary_color-600 mt-2">
                           {perk.perk.name}
@@ -89,8 +89,8 @@ const Facilities = ({ facilities, perks, users }: RoomsProps) => {
                 </TableCell>
 
                 <TableCell>
-                  {facility.users.map((user) => (
-                    <div className="flex items-center ">
+                  {facility.users.map((user, index) => (
+                    <div className="flex items-center" key={index}>
                       <div className="flex items-center gap-2">
                         <Badge className="bg-emerald-500 hover:bg-emerald-600 mt-2">
                           {user.user.name}
