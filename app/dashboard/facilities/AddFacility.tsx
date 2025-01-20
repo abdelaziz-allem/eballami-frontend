@@ -116,9 +116,9 @@ const AddFacility = () => {
               defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter user name" {...field} />
+                    <Input placeholder="Enter name" {...field} />
                   </FormControl>
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-500">

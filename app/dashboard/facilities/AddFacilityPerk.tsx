@@ -34,9 +34,8 @@ import {
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading";
 import { toast } from "@/hooks/use-toast";
-import { Facility, Perk, User } from "@/lib/types/type";
+import { Perk } from "@/lib/types/type";
 import { createFacilityPerk } from "@/lib/db/facilityPerkCrud";
-import { Plus } from "lucide-react";
 
 interface AddFacilityPerkProps {
   perks: Perk[];
