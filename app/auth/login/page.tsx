@@ -59,7 +59,7 @@ function LoginPage() {
         password: data.password,
       });
       nookies.set(undefined, "access_token", user.access_token, { path: "/" });
-      router.push("/dashboard");
+      router.push("/choose");
     } catch (err) {
       console.error("Login error:", err);
       setError(

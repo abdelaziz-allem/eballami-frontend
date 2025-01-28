@@ -45,6 +45,14 @@ export async function middleware(request: NextRequest) {
     ],
   };
 
+  const cookies = request.cookies;
+
+  const facilityId = cookies.get("facilityId")?.value;
+
+  if (role === "Owner" && !facilityId) {
+    return NextResponse.redirect(new URL("/choose", request.url));
+  }
+
   const hasAccess = (role: string | undefined, pathname: string): boolean => {
     if (!role) return false;
     const accessibleRoutes = routeAccess[role];

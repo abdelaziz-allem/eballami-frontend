@@ -60,7 +60,6 @@ type FormData = z.infer<typeof schema>;
 const EditFacility = ({ facility }: { facility: Facility }) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   const methods = useForm<FormData>({
@@ -83,6 +82,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
   } = methods;
 
   async function onSubmit(formData: FormData) {
+    let newImageUrl: string | undefined = undefined;
     try {
       setLoading(true);
 
@@ -99,18 +99,14 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
           body: ImageForm,
         });
 
-        console.log("response", response);
-
         if (!response.ok) {
           throw new Error("Failed to upload image to Uploadcare");
         }
 
         const data = await response.json();
         const imageUrl = data.file;
-
-        setImageUrl(`https://ucarecdn.com/${imageUrl}/
--/preview/1000x750/`);
-        console.log("data", data);
+        newImageUrl = `https://ucarecdn.com/${imageUrl}/
+-/preview/1000x750/`;
       }
 
       updateFacility(facility.id, {
@@ -118,19 +114,19 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
         mobileNumber: formData.mobileNumber,
         email: formData.email,
         description: formData.description,
-        logo: imageUrl,
+        logo: newImageUrl,
         openHour: formData.openHour,
         closeHour: formData.closeHour,
         price: +formData.price,
       });
 
       toast({
-        title: "User created successfully",
+        title: "Facility updated successfully",
         className: "bg-primary_color-500 text-white",
       });
 
       setDialogOpen(false);
-      // window.location.reload();
+      router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
     }
@@ -143,7 +139,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
+          <DialogTitle>Edit Facility</DialogTitle>
         </DialogHeader>
 
         <Form {...methods}>

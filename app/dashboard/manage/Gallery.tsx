@@ -61,8 +61,7 @@ const Gallery = ({ facility }: { facility: Facility }) => {
       description: "You can see it in your facility page.",
       className: "bg-primary text-primary-foreground",
     });
-
-    window.location.reload();
+    router.refresh();
   }
 
   return (

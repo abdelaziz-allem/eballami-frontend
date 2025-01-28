@@ -57,6 +57,7 @@ export interface Booking {
   userId: number;
   facilityId: number;
   bookedAt: string;
+  code: string;
   createdAt: string;
   status: BookingStatus;
   user: User;
