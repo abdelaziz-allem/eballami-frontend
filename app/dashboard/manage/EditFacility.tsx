@@ -8,15 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -34,21 +25,21 @@ import { LoadingSpinner } from "@/components/ui/loading";
 import { toast } from "@/hooks/use-toast";
 import { updateFacility } from "@/lib/db/facilityCrud";
 import { Facility } from "@/lib/types/type";
-import { Edit, ImagePlus } from "lucide-react";
-import timeList from "./timeList";
+import { Edit } from "lucide-react";
 
 const schema = z.object({
-  name: z.string().min(1, "User number is required"),
-  mobileNumber: z.string().min(1, "Mobile number is required").optional(),
+  name: z.string().min(1, "User name is required"),
+  mobileNumber: z.string().optional(),
   email: z.string().optional(),
   description: z.string().min(1, "Description is required"),
   logo: z
     .instanceof(File)
     .optional()
     .refine(
-      (file) =>
-        file === undefined || ["image/jpeg", "image/png"].includes(file.type),
-      { message: "Logo must be an image file of type jpg, jpeg, or png" }
+      (file) => !file || ["image/jpeg", "image/png"].includes(file.type),
+      {
+        message: "Logo must be an image file of type jpg, jpeg, or png",
+      }
     ),
   openHour: z.string(),
   closeHour: z.string(),
@@ -69,8 +60,14 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
       mobileNumber: facility.mobileNumber,
       email: facility.email,
       description: facility.description,
-      openHour: facility.openHour,
-      closeHour: facility.closeHour,
+      openHour: new Date(facility.openHour).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      closeHour: new Date(facility.closeHour).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       price: facility.price,
     },
   });
@@ -81,7 +78,13 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
     formState: { errors },
   } = methods;
 
-  async function onSubmit(formData: FormData) {
+  const getHourFromInput = (time: string) => {
+    const now = new Date();
+    const [hours, minutes] = time.split(":").map(Number);
+    return new Date(now.setHours(hours, minutes, 0, 0));
+  };
+
+  const onSubmit = async (formData: FormData) => {
     let newImageUrl: string | undefined = undefined;
     try {
       setLoading(true);
@@ -99,44 +102,43 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
           body: ImageForm,
         });
 
-        if (!response.ok) {
+        if (!response.ok)
           throw new Error("Failed to upload image to Uploadcare");
-        }
 
         const data = await response.json();
-        const imageUrl = data.file;
-        newImageUrl = `https://ucarecdn.com/${imageUrl}/
--/preview/1000x750/`;
+        newImageUrl = `https://ucarecdn.com/${data.file}/-/preview/1000x750/`;
       }
 
-      updateFacility(facility.id, {
+      await updateFacility(facility.id, {
         name: formData.name,
         mobileNumber: formData.mobileNumber,
         email: formData.email,
         description: formData.description,
         logo: newImageUrl,
-        openHour: formData.openHour,
-        closeHour: formData.closeHour,
-        price: +formData.price,
+        openHour: getHourFromInput(formData.openHour),
+        closeHour: getHourFromInput(formData.closeHour),
+        price: formData.price,
       });
 
       toast({
         title: "Facility updated successfully",
         className: "bg-primary_color-500 text-white",
       });
-
       setDialogOpen(false);
       router.refresh();
     } catch (error) {
       console.error("An error occurred:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }
+  };
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Edit className="text-primary_color-600 cursor-pointer transform transition-transform hover:scale-110" />
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Facility</DialogTitle>
@@ -147,12 +149,11 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
             <FormField
               control={control}
               name="name"
-              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Name</FormLabel>
+                  <FormLabel>Facility Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter user name" {...field} />
+                    <Input placeholder="Enter facility name" {...field} />
                   </FormControl>
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-500">
@@ -162,18 +163,15 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="mobileNumber"
-              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Mobile Number(s)</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Put space between mobileNumber"
-                      {...field}
-                    />
+                    <Input placeholder="Enter mobile number" {...field} />
                   </FormControl>
                   {errors.mobileNumber && (
                     <p className="mt-1 text-sm text-red-500">
@@ -183,10 +181,10 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="email"
-              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
@@ -201,19 +199,15 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="description"
-              defaultValue={""}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input
-                      type="description"
-                      placeholder="Enter description"
-                      {...field}
-                    />
+                    <Input placeholder="Enter description" {...field} />
                   </FormControl>
                   {errors.description && (
                     <p className="mt-1 text-sm text-red-500">
@@ -244,32 +238,19 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="openHour"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hours</FormLabel>
+                  <FormLabel>Opening Hour</FormLabel>
                   <FormControl>
-                    <Select
-                      required
+                    <Input
+                      type="time"
+                      placeholder="Enter opening hour"
                       {...field}
-                      onValueChange={(value: string) => field.onChange(value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select open hour" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Hours</SelectLabel>
-                          {timeList.map((hour) => (
-                            <SelectItem key={hour.id} value={hour.value}>
-                              {hour.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    />
                   </FormControl>
                   {errors.openHour && (
                     <p className="mt-1 text-sm text-red-500">
@@ -279,32 +260,19 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="closeHour"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hours</FormLabel>
+                  <FormLabel>Closing Hour</FormLabel>
                   <FormControl>
-                    <Select
-                      required
+                    <Input
+                      type="time"
+                      placeholder="Enter closing hour"
                       {...field}
-                      onValueChange={(value: string) => field.onChange(value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select close hour" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Hours</SelectLabel>
-                          {timeList.map((hour) => (
-                            <SelectItem key={hour.id} value={hour.value}>
-                              {hour.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    />
                   </FormControl>
                   {errors.closeHour && (
                     <p className="mt-1 text-sm text-red-500">
@@ -314,6 +282,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="price"
@@ -321,11 +290,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input
-                      type="Price /hour"
-                      placeholder="Enter price per hour"
-                      {...field}
-                    />
+                    <Input placeholder="Enter price" {...field} />
                   </FormControl>
                   {errors.price && (
                     <p className="mt-1 text-sm text-red-500">
@@ -335,6 +300,7 @@ const EditFacility = ({ facility }: { facility: Facility }) => {
                 </FormItem>
               )}
             />
+
             <DialogFooter>
               <Button
                 type="submit"

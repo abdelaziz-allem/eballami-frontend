@@ -25,6 +25,7 @@ import { EyeIcon, EyeOffIcon, Mail, PhoneIcon } from "lucide-react";
 import { getAccessToken } from "@/lib/db/auth";
 import nookies from "nookies";
 import { useRouter } from "next/navigation";
+import { getUserInSession } from "@/lib/db/userCrud";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Phone number is required"),
@@ -59,7 +60,12 @@ function LoginPage() {
         password: data.password,
       });
       nookies.set(undefined, "access_token", user.access_token, { path: "/" });
-      router.push("/choose");
+      const userInSession = await getUserInSession();
+      if (userInSession.role !== "Admin") {
+        router.push("/choose");
+        return;
+      }
+      router.push("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
       setError(

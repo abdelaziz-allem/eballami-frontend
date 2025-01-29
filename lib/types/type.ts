@@ -116,8 +116,8 @@ export interface CreateFacility {
   address: string;
   map?: string;
   type: FacilityType;
-  openHour?: string;
-  closeHour?: string;
+  openHour?: Date;
+  closeHour?: Date;
   price?: number;
 }
 
@@ -130,8 +130,8 @@ export interface UpdateFacility {
   address?: string;
   map?: string;
   type?: FacilityType;
-  openHour?: string;
-  closeHour?: string;
+  openHour?: Date;
+  closeHour?: Date;
   price?: number;
 }
 //Facilitys End//

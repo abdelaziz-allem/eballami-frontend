@@ -24,6 +24,25 @@ export async function getBookings(facilityId: number): Promise<Booking[]> {
   }
 }
 
+export async function getAvailableTimeByDate(
+  facilityId: number,
+  date: string
+): Promise<{ id: number; dateTime: string }[]> {
+  const headers = getAuthHeaders();
+  try {
+    const response = await axiosInstance.get(
+      `/booking/available?facilityId=${facilityId}&date=${date}`,
+      {
+        headers,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Bookings:", error);
+    throw new Error("Failed to fetch Bookings");
+  }
+}
+
 export const getBookingsByDate = async (date: string): Promise<Booking[]> => {
   const headers = getAuthHeaders();
   try {

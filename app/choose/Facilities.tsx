@@ -26,7 +26,6 @@ export function Facilities({
       path: "/",
     });
     router.push("/dashboard");
-    console.log("Submitted Facility ID:", selectedFacility);
   };
 
   return (
@@ -41,7 +40,7 @@ export function Facilities({
                 ? "ring-2 ring-primary_color-500 bg-primary/5"
                 : "hover:bg-muted/10"
             }`}
-            onClick={() => handleSelect(userFacility.id)}
+            onClick={() => handleSelect(userFacility.facility.id)}
           >
             <CardContent className="flex flex-col items-center text-center p-6 relative">
               {selectedFacility === userFacility.id && (
@@ -51,7 +50,7 @@ export function Facilities({
               )}
               <div className="w-24 h-24 mb-4 relative">
                 {userFacility.facility.logo ? (
-                  <Image
+                  <img
                     src={userFacility.facility.logo || "/placeholder.svg"}
                     alt={`${userFacility.facility.name} logo`}
                     width={96}

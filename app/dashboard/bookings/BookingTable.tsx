@@ -16,9 +16,18 @@ import { Calendar, Search, User, Mail, Hash } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { set } from "date-fns";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const BookingTable = ({ bookings }: { bookings: Booking[] }) => {
+const BookingTable = ({
+  bookings,
+  availableTimes,
+}: {
+  bookings: Booking[];
+  availableTimes: { id: number; dateTime: string }[];
+}) => {
   const [search, setSearch] = useState("");
+  const [selectedTime, setSelectedTime] = useState<string>("");
 
   const filterBookings = bookings.filter((booking) =>
     booking.user.email.toLowerCase().includes(search.toLowerCase())
@@ -36,6 +45,26 @@ const BookingTable = ({ bookings }: { bookings: Booking[] }) => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
+        <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+          <div className="flex w-12 space-x-4 p-4">
+            {availableTimes.map((time) => (
+              <Badge
+                key={time.id}
+                variant={"destructive"}
+                className={`cursor-pointer bg-primary_color-500 hover:bg-purple-600 ${
+                  selectedTime === time.dateTime
+                    ? "ring ring-primary_color-400"
+                    : ""
+                }`}
+                onClick={() => setSelectedTime(time.dateTime)}
+              >
+                {formatDate(time.dateTime)}
+              </Badge>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <Table>
           <TableHeader>
