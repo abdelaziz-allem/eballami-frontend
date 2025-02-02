@@ -49,8 +49,8 @@ const UsersTable = ({ users }: UsersProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>User Name</TableHead>
+              <TableHead>email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -58,11 +58,9 @@ const UsersTable = ({ users }: UsersProps) => {
             {currentUsers.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <Badge className={getRoleColor(user.role)}>{user.role}</Badge>
-                </TableCell>
-                <TableCell>
-                  <EditUser user={user} />
                 </TableCell>
               </TableRow>
             ))}
