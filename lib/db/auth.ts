@@ -21,3 +21,19 @@ export const getAccessToken = async (
     throw new Error("Failed to authenticate user");
   }
 };
+
+export const resetPassword = async (
+  token: string,
+  newPassword: string
+): Promise<AuthResponse> => {
+  try {
+    const response = await axiosInstance.post<AuthResponse>(
+      "/auth/reset-password",
+      { token, newPassword }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error authenticating user:" + error);
+    throw new Error("Failed to authenticate user");
+  }
+};
