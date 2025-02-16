@@ -39,7 +39,7 @@ export const createFacility = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error creating facility:", error);
+    console.error("Error creating facility:", error.response.data.message);
     throw new Error("Failed to create facility");
   }
 };
